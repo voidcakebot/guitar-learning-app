@@ -59,38 +59,20 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
             </div>
           ) : null}
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="card">
-              <span className="badge">Key details</span>
-              <div className="mt-4 space-y-4 text-sm text-slate-300">
-                <div>
-                  <p className="text-slate-400">Notes</p>
-                  <p className="mt-1 text-white">{entry.notes?.join(', ') ?? 'Not specified yet'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Fingering</p>
-                  <p className="mt-1 text-white">{defaultPattern?.fingers?.map((finger) => finger ?? 'x').join(' • ') ?? 'No fingering stored yet'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-400">Tags</p>
-                  <p className="mt-1 text-white">{entry.tags.join(' • ')}</p>
-                </div>
+          <div className="card">
+            <span className="badge">Key details</span>
+            <div className="mt-4 space-y-4 text-sm text-slate-300">
+              <div>
+                <p className="text-slate-400">Notes</p>
+                <p className="mt-1 text-white">{entry.notes?.join(', ') ?? 'Not specified yet'}</p>
               </div>
-            </div>
-
-            <div className="card">
-              <span className="badge">Learn this as</span>
-              <div className="mt-4 space-y-3 text-sm text-slate-300">
-                {(entry.recommendedFocus ?? []).map((focus) => {
-                  const option = focusOptions.find((item) => item.value === focus);
-                  if (!option) return null;
-                  return (
-                    <div key={focus} className="rounded-2xl border border-white/10 p-3">
-                      <p className="font-medium text-white">{option.label}</p>
-                      <p className="text-slate-400">{option.description}</p>
-                    </div>
-                  );
-                })}
+              <div>
+                <p className="text-slate-400">Fingering</p>
+                <p className="mt-1 text-white">{defaultPattern?.fingers?.map((finger) => finger ?? 'x').join(' • ') ?? 'No fingering stored yet'}</p>
+              </div>
+              <div>
+                <p className="text-slate-400">Tags</p>
+                <p className="mt-1 text-white">{entry.tags.join(' • ')}</p>
               </div>
             </div>
           </div>
