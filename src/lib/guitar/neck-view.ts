@@ -27,12 +27,3 @@ export function filterPositionsForWindow(positions: NeckViewPosition[], window: 
   return positions.filter((position) => position.fret >= window.start && position.fret <= window.end);
 }
 
-export function mapToFretboardJsDots(positions: NeckViewPosition[]) {
-  return positions.map((position) => ({
-    string: position.stringNumber,
-    fret: position.fret,
-    note: position.label ?? '',
-    fill: position.isRoot ? '#f97316' : '#0ea5e9',
-    stroke: 'rgba(255,255,255,0.2)',
-  }));
-}

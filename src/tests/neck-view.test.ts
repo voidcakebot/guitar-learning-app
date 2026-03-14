@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterPositionsForWindow, getNeckPositionWindow, mapToFretboardJsDots } from '@/lib/guitar/neck-view';
+import { filterPositionsForWindow, getNeckPositionWindow } from '@/lib/guitar/neck-view';
 
 describe('neck-view helpers', () => {
   it('filters positions by the selected neck window', () => {
@@ -20,15 +20,20 @@ describe('neck-view helpers', () => {
     ]);
   });
 
-  it('maps positions to fretboard.js dot coordinates without reversing strings', () => {
-    const dots = mapToFretboardJsDots([
-      { stringNumber: 6, fret: 3, label: 'G', isRoot: false },
-      { stringNumber: 5, fret: 1, label: 'C', isRoot: true },
-    ]);
+  it('keeps 6-string positions unchanged for the custom renderer', () => {
+    const window = getNeckPositionWindow('pos-3');
+    const result = filterPositionsForWindow(
+      [
+        { stringNumber: 6, fret: 3, label: 'G', isRoot: false },
+        { stringNumber: 5, fret: 4, label: 'C', isRoot: true },
+        { stringNumber: 2, fret: 8, label: 'G', isRoot: false },
+      ],
+      window,
+    );
 
-    expect(dots).toEqual([
-      expect.objectContaining({ string: 6, fret: 3, note: 'G', fill: '#0ea5e9' }),
-      expect.objectContaining({ string: 5, fret: 1, note: 'C', fill: '#f97316' }),
+    expect(result).toEqual([
+      { stringNumber: 6, fret: 3, label: 'G', isRoot: false },
+      { stringNumber: 5, fret: 4, label: 'C', isRoot: true },
     ]);
   });
 });
