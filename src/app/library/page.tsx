@@ -32,7 +32,6 @@ export default function LibraryPage() {
                 <Link key={entry.slug} href={`/library/${entry.slug}`} className="card transition hover:border-orange-400/60">
                   <div className="flex items-center justify-between gap-3">
                     <span className="badge">{entry.type}</span>
-                    <span className="text-xs text-slate-400">Difficulty {entry.difficulty}</span>
                   </div>
                   <h3 className="mt-4 text-xl font-semibold text-white">{entry.title}</h3>
                   <p className="mt-2 text-sm text-slate-300">{entry.summary}</p>

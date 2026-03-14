@@ -28,8 +28,7 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
                 <p className="mt-3 max-w-2xl text-slate-300">{entry.summary}</p>
               </div>
               <div className="rounded-2xl border border-white/10 p-4 text-sm text-slate-300">
-                <p>Difficulty: {entry.difficulty}</p>
-                <p className="mt-2">Root: {entry.rootNote ?? '—'}</p>
+                <p>Root: {entry.rootNote ?? '—'}</p>
                 <p className="mt-2">Formula: {entry.formula?.join(' · ') ?? 'Conceptual content'}</p>
               </div>
             </div>

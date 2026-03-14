@@ -22,7 +22,6 @@ export type LibraryEntry = {
   type: EntryType;
   title: string;
   summary: string;
-  difficulty: number;
   tags: string[];
   rootNote?: string;
   quality?: string;
@@ -43,7 +42,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'chord',
     title: 'C Major',
     summary: 'The foundational open C major chord with bright, stable harmony.',
-    difficulty: 1,
     tags: ['open-chord', 'major', 'beginner'],
     rootNote: 'C',
     quality: 'major',
@@ -75,7 +73,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'chord',
     title: 'G Major',
     summary: 'A versatile open chord that anchors many beginner progressions.',
-    difficulty: 1,
     tags: ['open-chord', 'major', 'beginner'],
     rootNote: 'G',
     quality: 'major',
@@ -108,7 +105,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'chord',
     title: 'A Minor',
     summary: 'A beginner-friendly minor chord with the same shape family as C major.',
-    difficulty: 1,
     tags: ['open-chord', 'minor', 'beginner'],
     rootNote: 'A',
     quality: 'minor',
@@ -140,7 +136,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'scale',
     title: 'C Major Scale',
     summary: 'The no-sharps, no-flats major scale used to understand interval structure.',
-    difficulty: 2,
     tags: ['scale', 'major', 'theory'],
     rootNote: 'C',
     scaleType: 'major',
@@ -173,7 +168,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'scale',
     title: 'A Minor Pentatonic',
     summary: 'A high-value beginner scale for riffs, improvisation, and pattern awareness.',
-    difficulty: 2,
     tags: ['scale', 'minor', 'pentatonic'],
     rootNote: 'A',
     scaleType: 'minor pentatonic',
@@ -205,7 +199,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Major Chord Construction',
     summary: 'How major triads are built from the 1st, 3rd, and 5th scale degrees.',
-    difficulty: 1,
     tags: ['theory', 'intervals', 'triads'],
     topic: 'chord construction',
     relatedSlugs: ['c-major', 'g-major', 'c-major-scale'],
@@ -222,7 +215,6 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Natural Minor Basics',
     summary: 'The minor sound comes from flattening the 3rd, 6th, and 7th degrees.',
-    difficulty: 2,
     tags: ['theory', 'minor', 'scale-construction'],
     topic: 'scale construction',
     relatedSlugs: ['a-minor', 'minor-pentatonic-a'],
