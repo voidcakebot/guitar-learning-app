@@ -88,7 +88,7 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
                   x2={right}
                   y2={y}
                   stroke="#cbd5e1"
-                  strokeWidth={stringNumber >= 5 ? 4.5 : 3.5}
+                  strokeWidth={stringNumber >= 5 ? 4 : 3}
                 />
                 <text x={20} y={y + 5} textAnchor="middle" fontSize={13} fill="#e2e8f0" fontWeight={700}>
                   {stringNumber}
@@ -136,8 +136,8 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
 
             return (
               <g key={`${position.stringNumber}-${position.fret}-${position.label}`}>
-                <circle cx={x} cy={y} r={14} fill={position.isRoot ? '#f97316' : '#0ea5e9'} stroke="rgba(255,255,255,0.24)" strokeWidth={2} />
-                <text x={x} y={y + 4} textAnchor="middle" fontSize={10} fontWeight={700} fill="#ffffff">
+                <circle cx={x} cy={y} r={13} fill={position.isRoot ? '#f97316' : '#0ea5e9'} stroke="rgba(255,255,255,0.24)" strokeWidth={2} />
+                <text x={x} y={y + 3.5} textAnchor="middle" fontSize={10} fontWeight={700} fill="#ffffff">
                   {position.label}
                 </text>
               </g>
