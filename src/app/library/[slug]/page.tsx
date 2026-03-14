@@ -7,6 +7,19 @@ import { focusOptions, getLibraryEntry } from '@/lib/data/library';
 import { ensureDb, getDashboardData } from '@/lib/db/store';
 import { buildFretboardPositions } from '@/lib/guitar/fretboard-map';
 
+const openChordMuteMap: Record<string, number[]> = {
+  'c-major': [6],
+  'c-major-7': [6],
+  'd-major': [6, 5],
+  'd-minor': [6, 5],
+  'a-major': [6],
+  'a-minor': [6],
+  'e-major': [],
+  'e-minor': [],
+  'g-major': [],
+  'g-dominant-7': [5],
+};
+
 export default async function LibraryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const entry = getLibraryEntry(slug);
@@ -21,6 +34,10 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
     rootNote: entry.rootNote,
     maxFret: 12,
   });
+  const mutedStrings = defaultPattern?.stringFrets
+    ?.map((value, index) => (value === 'x' ? 6 - index : null))
+    .filter((value): value is number => value !== null)
+    ?? (entry.type === 'chord' ? openChordMuteMap[entry.slug] ?? [] : []);
 
   return (
     <AppShell>
@@ -50,7 +67,7 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
                 <span className="badge">12 frets</span>
               </div>
               <div className="mt-5">
-                <Fretboard frets={12} positions={fretboardPositions} />
+                <Fretboard frets={12} positions={fretboardPositions} mutedStrings={mutedStrings} />
               </div>
             </div>
           ) : null}

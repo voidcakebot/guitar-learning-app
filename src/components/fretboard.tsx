@@ -20,7 +20,7 @@ const tuningLabels: Record<number, string> = {
   1: 'E',
 };
 
-export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPosition[]; frets?: number }) {
+export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positions: NeckViewPosition[]; frets?: number; mutedStrings?: number[] }) {
   const [activeWindowKey, setActiveWindowKey] = useState<NeckPositionWindowKey>('open');
   const activeWindow = getNeckPositionWindow(activeWindowKey);
 
@@ -76,6 +76,12 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
             const y = top + index * stringGap;
             return (
               <g key={`string-${stringNumber}`}>
+                {mutedStrings.includes(stringNumber) ? (
+                  <g>
+                    <line x1={left - 14} y1={y - 8} x2={left - 2} y2={y + 8} stroke="#fda4af" strokeWidth={2.5} strokeLinecap="round" />
+                    <line x1={left - 14} y1={y + 8} x2={left - 2} y2={y - 8} stroke="#fda4af" strokeWidth={2.5} strokeLinecap="round" />
+                  </g>
+                ) : null}
                 <line
                   x1={left}
                   y1={y}
