@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+  color: #e2e8f0;
+}
+
+.card {
+  @apply rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-slate-950/20;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full border border-white/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-slate-300;
+}
+
+.button-primary {
+  @apply inline-flex items-center justify-center rounded-full bg-orange-500 px-4 py-2 font-medium text-white transition hover:bg-orange-400;
+}
+
+.button-secondary {
+  @apply inline-flex items-center justify-center rounded-full border border-white/10 px-4 py-2 font-medium text-slate-200 transition hover:border-orange-400 hover:text-white;
+}
+
+input,
+textarea,
+select {
+  @apply w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none ring-0 placeholder:text-slate-500;
+}
