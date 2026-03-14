@@ -14,10 +14,10 @@ export default function LibraryPage() {
     <AppShell>
       <div className="space-y-8">
         <div className="card">
-          <span className="badge">Guitar library</span>
-          <h1 className="mt-4 text-3xl font-semibold text-white">Static knowledge, ready for practice</h1>
+          <span className="badge">Tonal reference</span>
+          <h1 className="mt-4 text-3xl font-semibold text-white">Generated basic knowledge, ready for practice</h1>
           <p className="mt-2 max-w-3xl text-slate-300">
-            The app ships with built-in guitar knowledge for chords, scales, and theory. Your personal progress starts only when you add something to your learning list.
+            This library now uses Tonal.js as the basic music theory source. Browse generated chords and scales, then turn the parts you actually learned into personal study items.
           </p>
         </div>
 
