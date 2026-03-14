@@ -10,13 +10,11 @@ export default function LibraryPage() {
     {
       key: 'chords',
       label: 'Chords',
-      description: 'Browse generated chord reference entries across the full chromatic set.',
       entries: chords,
     },
     {
       key: 'scales',
       label: 'Scales',
-      description: 'Browse generated scale reference entries across the full chromatic set.',
       entries: scales,
     },
   ];
@@ -26,12 +24,8 @@ export default function LibraryPage() {
       <div className="space-y-8">
         {sections.map((section) => (
           <section key={section.key} className="space-y-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-white">{section.label}</h2>
-                <p className="text-sm text-slate-300">{section.description}</p>
-              </div>
-              <span className="badge">{section.entries.length}</span>
+            <div>
+              <h2 className="text-xl font-semibold text-white">{section.label}</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {section.entries.map((entry) => (
@@ -41,7 +35,6 @@ export default function LibraryPage() {
                     <span className="text-xs uppercase tracking-[0.2em] text-slate-400">{entry.rootNote}</span>
                   </div>
                   <h3 className="mt-4 text-xl font-semibold text-white">{entry.title}</h3>
-                  <p className="mt-2 text-sm text-slate-300">{entry.summary}</p>
                 </Link>
               ))}
             </div>
