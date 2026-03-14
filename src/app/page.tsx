@@ -10,8 +10,8 @@ export default async function HomePage() {
   return (
     <AppShell>
       <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-        <div className="card space-y-5">
-          <div className="flex flex-wrap gap-3">
+        <div className="card space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
             <Link href="/dashboard" className="button-primary">Open dashboard</Link>
             <Link href="/library" className="button-secondary">Browse library</Link>
           </div>
