@@ -58,11 +58,11 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {fretboardPositions.length ? (
-            <div className="card overflow-hidden">
+            <div className="card overflow-hidden p-4 sm:p-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <span className="badge">Neck view</span>
-                  <p className="mt-2 text-sm text-slate-300">Visual note map for this {entry.type} across the full neck.</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">Interactive note map for this {entry.type}, with position switching, open-string markers, and muted-string indicators.</p>
                 </div>
                 <span className="badge">12 frets</span>
               </div>
