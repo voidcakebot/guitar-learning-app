@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { AppShell } from '@/components/app-shell';
 import { Fretboard } from '@/components/fretboard';
-import { focusOptions, getLibraryEntry, getNextSteps, getRelatedEntries } from '@/lib/data/library';
+import { focusOptions, getLibraryEntry } from '@/lib/data/library';
 import { getDashboardData } from '@/lib/db/store';
 
 export default async function LibraryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -14,9 +14,6 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
   const dashboard = await getDashboardData();
   const alreadyLearning = dashboard.learningItems.find((item) => item.entry_slug === entry.slug);
   const defaultPattern = entry.patterns?.[0];
-  const related = getRelatedEntries(entry);
-  const nextSteps = getNextSteps(entry);
-
   return (
     <AppShell>
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
@@ -122,29 +119,6 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
             </form>
           </div>
 
-          <div className="card">
-            <span className="badge">Related content</span>
-            <div className="mt-4 space-y-3">
-              {related.map((item) => (
-                <Link key={item.slug} href={`/library/${item.slug}`} className="block rounded-2xl border border-white/10 p-4 transition hover:border-orange-400/60">
-                  <p className="font-medium text-white">{item.title}</p>
-                  <p className="mt-1 text-sm text-slate-400">{item.summary}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="card">
-            <span className="badge">Next step</span>
-            <div className="mt-4 space-y-3">
-              {nextSteps.map((item) => (
-                <Link key={item.slug} href={`/library/${item.slug}`} className="block rounded-2xl border border-white/10 p-4 transition hover:border-orange-400/60">
-                  <p className="font-medium text-white">{item.title}</p>
-                  <p className="mt-1 text-sm text-slate-400">{item.summary}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </AppShell>
