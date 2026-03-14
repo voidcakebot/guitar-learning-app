@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import ReactFretboard from 'react-fretboard';
 
 type Position = {
@@ -10,42 +11,55 @@ type Position = {
 };
 
 const tuning = ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'];
+const positionWindows = [
+  { key: 'open', label: 'Open', start: 0, end: 4 },
+  { key: 'mid-low', label: '3–7', start: 3, end: 7 },
+  { key: 'mid', label: '5–9', start: 5, end: 9 },
+  { key: 'high', label: '7–12', start: 7, end: 12 },
+] as const;
 
-function statusFromLabel(label?: string, isRoot?: boolean) {
-  if (isRoot) return 'root';
-
-  switch (label) {
-    case 'b2': return 'flat2';
-    case '2nd': return 'second';
-    case 'b3': return 'flat3';
-    case '3rd': return 'third';
-    case '4th': return 'fourth';
-    case 'b5': return 'flat5';
-    case '5th': return 'fifth';
-    case '#5': return 'sharp5';
-    case '6th': return 'sixth';
-    case 'b7': return 'flat7';
-    case '7th': return 'seventh';
-    default: return 'tone';
-  }
+function statusFromPosition(isRoot?: boolean) {
+  return isRoot ? 'root' : 'tone';
 }
 
 export function Fretboard({ positions, frets = 12 }: { positions: Position[]; frets?: number }) {
-  const selectedLocations = positions.map((position) => ({
-    loc: {
-      str: 6 - position.stringNumber,
-      pos: position.fret,
-    },
-    label: position.label ?? '',
-    status: statusFromLabel(position.label, position.isRoot),
-  }));
+  const [activeWindowKey, setActiveWindowKey] = useState<(typeof positionWindows)[number]['key']>('open');
+  const activeWindow = positionWindows.find((window) => window.key === activeWindowKey) ?? positionWindows[0];
+
+  const selectedLocations = useMemo(() => {
+    return positions
+      .filter((position) => position.fret >= activeWindow.start && position.fret <= activeWindow.end)
+      .map((position) => ({
+        loc: {
+          str: 6 - position.stringNumber,
+          pos: position.fret,
+        },
+        label: position.label ?? '',
+        status: statusFromPosition(position.isRoot),
+      }));
+  }, [activeWindow.end, activeWindow.start, positions]);
 
   return (
     <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-4 shadow-2xl shadow-slate-950/40">
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-white">Fretboard view</p>
-          <p className="text-xs text-slate-400">Rendered with react-fretboard. Root and interval roles are highlighted across the neck.</p>
+          <p className="text-sm font-medium text-white">Neck view</p>
+          <p className="text-xs text-slate-400">Choose a neck position to inspect. Nodes are labeled with note names.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {positionWindows.map((window) => {
+            const isActive = window.key === activeWindow.key;
+            return (
+              <button
+                key={window.key}
+                type="button"
+                onClick={() => setActiveWindowKey(window.key)}
+                className={isActive ? 'button-primary' : 'button-secondary'}
+              >
+                {window.label}
+              </button>
+            );
+          })}
         </div>
       </div>
       <ReactFretboard
@@ -77,17 +91,6 @@ export function Fretboard({ positions, frets = 12 }: { positions: Position[]; fr
             unselected: '#0f172a',
             root: '#f97316',
             tone: '#0ea5e9',
-            flat2: '#7dd3fc',
-            second: '#7dd3fc',
-            flat3: '#38bdf8',
-            third: '#22d3ee',
-            fourth: '#67e8f9',
-            flat5: '#60a5fa',
-            fifth: '#34d399',
-            sharp5: '#a78bfa',
-            sixth: '#facc15',
-            flat7: '#fda4af',
-            seventh: '#f9a8d4',
           },
         }}
       />

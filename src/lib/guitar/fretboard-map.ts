@@ -2,21 +2,6 @@ import { Note } from 'tonal';
 
 const standardTuning = ['E', 'A', 'D', 'G', 'B', 'E'];
 const strings = [6, 5, 4, 3, 2, 1] as const;
-const intervalLabels: Record<number, string> = {
-  0: 'Root',
-  1: 'b2',
-  2: '2nd',
-  3: 'b3',
-  4: '3rd',
-  5: '4th',
-  6: 'b5',
-  7: '5th',
-  8: '#5',
-  9: '6th',
-  10: 'b7',
-  11: '7th',
-};
-
 export type FretboardTonePosition = {
   stringNumber: number;
   fret: number;
@@ -26,12 +11,6 @@ export type FretboardTonePosition = {
 
 function noteChroma(note: string) {
   return Note.chroma(note);
-}
-
-function getIntervalLabel(noteChromaValue: number, rootChroma: number | null) {
-  if (rootChroma === null) return '•';
-  const semitones = (noteChromaValue - rootChroma + 12) % 12;
-  return intervalLabels[semitones] ?? '•';
 }
 
 export function buildFretboardPositions({
@@ -63,7 +42,7 @@ export function buildFretboardPositions({
       positions.push({
         stringNumber: strings[index],
         fret,
-        label: getIntervalLabel(fretChroma, rootChroma),
+        label: match.note,
         isRoot: rootChroma !== null && fretChroma === rootChroma,
       });
     }
