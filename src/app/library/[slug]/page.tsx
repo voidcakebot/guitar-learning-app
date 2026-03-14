@@ -23,7 +23,6 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
               <div>
                 <span className="badge">{entry.type}</span>
                 <h1 className="mt-4 text-4xl font-semibold text-white">{entry.title}</h1>
-                <p className="mt-3 max-w-2xl text-slate-300">{entry.summary}</p>
               </div>
               <div className="min-w-64 rounded-2xl border border-white/10 p-4 text-sm text-slate-300">
                 <p>Root note: {entry.rootNote ?? '—'}</p>
