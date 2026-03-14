@@ -123,10 +123,10 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
                   const checked = (entry.recommendedFocus ?? []).includes(option.value);
                   return (
                     <label key={option.value} className="flex items-start gap-3 rounded-2xl border border-white/10 p-3 text-sm text-slate-300">
-                      <input type="checkbox" name="focusAreas" value={option.value} defaultChecked={checked} className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-950" />
-                      <span>
+                      <input type="checkbox" name="focusAreas" value={option.value} defaultChecked={checked} className="mt-1 h-4 w-4 shrink-0 rounded border-white/20 bg-slate-950" />
+                      <span className="min-w-0 flex-1">
                         <span className="block font-medium text-white">{option.label}</span>
-                        <span className="text-slate-400">{option.description}</span>
+                        <span className="block text-slate-400">{option.description}</span>
                       </span>
                     </label>
                   );
