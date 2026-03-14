@@ -32,12 +32,12 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
   const fretEnd = Math.min(activeWindow.end, frets);
   const displayedFrets = Array.from({ length: fretEnd - fretStart + 1 }, (_, index) => fretStart + index);
 
-  const width = 920;
-  const height = 300;
-  const left = 84;
-  const right = width - 24;
-  const top = 48;
-  const bottom = height - 46;
+  const width = 760;
+  const height = 272;
+  const left = 52;
+  const right = width - 18;
+  const top = 44;
+  const bottom = height - 40;
   const stringGap = (bottom - top) / (strings.length - 1);
   const fretCount = displayedFrets.length;
   const fretGap = (right - left) / Math.max(fretCount, 1);
@@ -45,11 +45,11 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
   const isOpenWindow = firstVisibleFret === 0;
 
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-4 shadow-2xl shadow-slate-950/40">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="rounded-[1.5rem] border border-white/10 bg-slate-950/80 p-3 shadow-2xl shadow-slate-950/40 sm:rounded-[2rem] sm:p-4">
+      <div className="mb-4 space-y-3">
         <div>
           <p className="text-sm font-medium text-white">Neck view</p>
-          <p className="text-xs text-slate-400">6 strings, note labels directly on the strings.</p>
+          <p className="text-xs leading-5 text-slate-400">6 strings, note labels directly on the strings.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {neckPositionWindows.map((window) => {
@@ -68,8 +68,8 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[760px] w-full">
+      <div className="overflow-x-auto -mx-1 px-1 sm:mx-0 sm:px-0">
+        <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[640px] w-full sm:min-w-[760px]">
           <rect x={left} y={top - 18} width={right - left} height={bottom - top + 36} rx={20} fill="#111827" stroke="#334155" />
 
           {strings.map((stringNumber, index) => {
@@ -84,10 +84,10 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
                   stroke="#94a3b8"
                   strokeWidth={stringNumber >= 5 ? 3 : 2}
                 />
-                <text x={34} y={y + 5} textAnchor="middle" fontSize={15} fill="#e2e8f0" fontWeight={700}>
+                <text x={20} y={y + 5} textAnchor="middle" fontSize={13} fill="#e2e8f0" fontWeight={700}>
                   {stringNumber}
                 </text>
-                <text x={58} y={y + 5} textAnchor="middle" fontSize={13} fill="#94a3b8">
+                <text x={36} y={y + 5} textAnchor="middle" fontSize={11} fill="#94a3b8">
                   {tuningLabels[stringNumber]}
                 </text>
               </g>
@@ -106,7 +106,7 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
                   stroke={index === 0 && !isOpenWindow ? '#e2e8f0' : '#475569'}
                   strokeWidth={index === 0 && !isOpenWindow ? 6 : 3}
                 />
-                <text x={isOpenWindow ? left + index * fretGap + fretGap * 0.5 : left + index * fretGap + fretGap * 0.5} y={height - 12} textAnchor="middle" fontSize={12} fill="#94a3b8">
+                <text x={isOpenWindow ? left + index * fretGap + fretGap * 0.5 : left + index * fretGap + fretGap * 0.5} y={height - 10} textAnchor="middle" fontSize={11} fill="#94a3b8">
                   {fret === 0 ? 'Open' : fret}
                 </text>
               </g>
@@ -130,8 +130,8 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
 
             return (
               <g key={`${position.stringNumber}-${position.fret}-${position.label}`}>
-                <circle cx={x} cy={y} r={19} fill={position.isRoot ? '#f97316' : '#0ea5e9'} stroke="rgba(255,255,255,0.24)" strokeWidth={2} />
-                <text x={x} y={y + 4.5} textAnchor="middle" fontSize={12} fontWeight={700} fill="#ffffff">
+                <circle cx={x} cy={y} r={16} fill={position.isRoot ? '#f97316' : '#0ea5e9'} stroke="rgba(255,255,255,0.24)" strokeWidth={2} />
+                <text x={x} y={y + 4} textAnchor="middle" fontSize={11} fontWeight={700} fill="#ffffff">
                   {position.label}
                 </text>
               </g>

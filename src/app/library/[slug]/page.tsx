@@ -41,8 +41,8 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {fretboardPositions.length ? (
-            <div className="card">
-              <div className="flex items-center justify-between gap-3">
+            <div className="card overflow-hidden">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <span className="badge">Neck view</span>
                   <p className="mt-2 text-sm text-slate-300">Visual note map for this {entry.type} across the full neck.</p>
