@@ -2,8 +2,6 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 const nav = [
-  { href: '/', label: 'Learning now' },
-  { href: '/review', label: 'Anki review' },
   { href: '/library', label: 'Library' },
 ];
 
@@ -15,13 +13,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-3">
-                <p className="badge">Signal map</p>
-                <span className="text-[0.7rem] uppercase tracking-[0.32em] text-[color:var(--muted)]">guided guitar system</span>
+                <p className="badge">Library mode</p>
+                <span className="text-[0.7rem] uppercase tracking-[0.32em] text-[color:var(--muted)]">guitar knowledge browser</span>
               </div>
               <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3">
-                <Link href="/" className="display-font text-5xl leading-none text-[color:var(--text)] sm:text-6xl">Fretboard Pilot</Link>
+                <Link href="/library" className="display-font text-5xl leading-none text-[color:var(--text)] sm:text-6xl">Fretboard Pilot</Link>
                 <p className="max-w-md text-sm leading-6 text-[color:var(--muted)]">
-                  Shapes, theory, and review presented like a live instrument panel instead of a generic app dashboard.
+                  A focused guitar library for browsing generated chord and scale knowledge from Tonal.js.
                 </p>
               </div>
             </div>
