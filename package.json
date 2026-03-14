@@ -17,6 +17,8 @@
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-fretboard": "^0.0.12",
+    "styled-components": "^3.4.10",
     "tonal": "^6.4.3",
     "zod": "^4.1.11"
   },
