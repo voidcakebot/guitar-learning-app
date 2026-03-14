@@ -50,8 +50,8 @@ export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPositi
       bottomPadding: 28,
     });
 
-    fretboard.render();
     fretboard.setDots(mapToFretboardJsDots(visiblePositions));
+    fretboard.render();
     fretboard.style({
       filter: (position: { note?: string }) => Boolean(position.note),
       text: (position: { note?: string }) => position.note ?? '',
