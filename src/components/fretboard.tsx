@@ -3,33 +3,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Fretboard as FretboardRenderer } from '@moonwave99/fretboard.js';
 
-type Position = {
-  stringNumber: number;
-  fret: number;
-  label?: string;
-  isRoot?: boolean;
-};
+import {
+  filterPositionsForWindow,
+  getNeckPositionWindow,
+  mapToFretboardJsDots,
+  neckPositionWindows,
+  type NeckPositionWindowKey,
+  type NeckViewPosition,
+} from '@/lib/guitar/neck-view';
 
-const tuning = ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'];
-const positionWindows = [
-  { key: 'open', label: 'Open', start: 0, end: 4 },
-  { key: 'pos-1', label: '1', start: 1, end: 5 },
-  { key: 'pos-2', label: '2', start: 2, end: 6 },
-  { key: 'pos-3', label: '3', start: 3, end: 7 },
-  { key: 'pos-4', label: '4', start: 4, end: 8 },
-  { key: 'pos-5', label: '5', start: 5, end: 9 },
-  { key: 'pos-7', label: '7', start: 7, end: 11 },
-  { key: 'pos-9', label: '9', start: 9, end: 12 },
-] as const;
-
-export function Fretboard({ positions, frets = 12 }: { positions: Position[]; frets?: number }) {
-  const [activeWindowKey, setActiveWindowKey] = useState<(typeof positionWindows)[number]['key']>('open');
-  const activeWindow = positionWindows.find((window) => window.key === activeWindowKey) ?? positionWindows[0];
+export function Fretboard({ positions, frets = 12 }: { positions: NeckViewPosition[]; frets?: number }) {
+  const [activeWindowKey, setActiveWindowKey] = useState<NeckPositionWindowKey>('open');
+  const activeWindow = getNeckPositionWindow(activeWindowKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const visiblePositions = useMemo(() => {
-    return positions.filter((position) => position.fret >= activeWindow.start && position.fret <= activeWindow.end);
-  }, [activeWindow.end, activeWindow.start, positions]);
+    return filterPositionsForWindow(positions, activeWindow);
+  }, [activeWindow, positions]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -38,7 +28,7 @@ export function Fretboard({ positions, frets = 12 }: { positions: Position[]; fr
 
     const fretboard = new FretboardRenderer({
       el: containerRef.current,
-      tuning,
+      tuning: ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'],
       fretCount: frets,
       showFretNumbers: true,
       width: 920,
@@ -61,15 +51,7 @@ export function Fretboard({ positions, frets = 12 }: { positions: Position[]; fr
     });
 
     fretboard.render();
-    fretboard.setDots(
-      visiblePositions.map((position) => ({
-        string: 7 - position.stringNumber,
-        fret: position.fret,
-        note: position.label ?? '',
-        fill: position.isRoot ? '#f97316' : '#0ea5e9',
-        stroke: 'rgba(255,255,255,0.2)',
-      })),
-    );
+    fretboard.setDots(mapToFretboardJsDots(visiblePositions));
     fretboard.style({
       filter: (position: { note?: string }) => Boolean(position.note),
       text: (position: { note?: string }) => position.note ?? '',
@@ -92,7 +74,7 @@ export function Fretboard({ positions, frets = 12 }: { positions: Position[]; fr
           <p className="text-xs text-slate-400">Choose a neck position to inspect. Nodes are labeled with note names.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {positionWindows.map((window) => {
+          {neckPositionWindows.map((window) => {
             const isActive = window.key === activeWindow.key;
             return (
               <button
