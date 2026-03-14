@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import ReactFretboard from 'react-fretboard';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fretboard as FretboardRenderer } from '@moonwave99/fretboard.js';
 
 type Position = {
   stringNumber: number;
@@ -18,26 +18,67 @@ const positionWindows = [
   { key: 'high', label: '7–12', start: 7, end: 12 },
 ] as const;
 
-function statusFromPosition(isRoot?: boolean) {
-  return isRoot ? 'root' : 'tone';
-}
-
 export function Fretboard({ positions, frets = 12 }: { positions: Position[]; frets?: number }) {
   const [activeWindowKey, setActiveWindowKey] = useState<(typeof positionWindows)[number]['key']>('open');
   const activeWindow = positionWindows.find((window) => window.key === activeWindowKey) ?? positionWindows[0];
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedLocations = useMemo(() => {
-    return positions
-      .filter((position) => position.fret >= activeWindow.start && position.fret <= activeWindow.end)
-      .map((position) => ({
-        loc: {
-          str: 6 - position.stringNumber,
-          pos: position.fret,
-        },
-        label: position.label ?? '',
-        status: statusFromPosition(position.isRoot),
-      }));
+  const visiblePositions = useMemo(() => {
+    return positions.filter((position) => position.fret >= activeWindow.start && position.fret <= activeWindow.end);
   }, [activeWindow.end, activeWindow.start, positions]);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    containerRef.current.innerHTML = '';
+
+    const fretboard = new FretboardRenderer({
+      el: containerRef.current,
+      tuning,
+      fretCount: frets,
+      showFretNumbers: true,
+      width: 920,
+      height: 240,
+      stringWidth: [3, 2.6, 2.2, 1.8, 1.5, 1.3],
+      fretWidth: 72,
+      stringColor: '#7dd3fc',
+      fretColor: '#334155',
+      nutColor: '#e2e8f0',
+      background: 'transparent',
+      dotFill: '#0f172a',
+      dotStrokeColor: 'rgba(255,255,255,0.15)',
+      dotTextSize: 14,
+      font: 'IBM Plex Sans, sans-serif',
+      fretNumbersColor: '#94a3b8',
+      leftPadding: 22,
+      rightPadding: 22,
+      topPadding: 28,
+      bottomPadding: 28,
+    });
+
+    fretboard.render();
+    fretboard.setDots(
+      visiblePositions.map((position) => ({
+        string: 7 - position.stringNumber,
+        fret: position.fret,
+        note: position.label ?? '',
+        fill: position.isRoot ? '#f97316' : '#0ea5e9',
+        stroke: 'rgba(255,255,255,0.2)',
+      })),
+    );
+    fretboard.style({
+      filter: (position: { note?: string }) => Boolean(position.note),
+      text: (position: { note?: string }) => position.note ?? '',
+      fill: (position: { fill?: string }) => position.fill ?? '#0ea5e9',
+      stroke: (position: { stroke?: string }) => position.stroke ?? 'rgba(255,255,255,0.2)',
+      fontFill: '#ffffff',
+      fontSize: 13,
+    });
+
+    return () => {
+      if (containerRef.current) containerRef.current.innerHTML = '';
+    };
+  }, [frets, visiblePositions]);
 
   return (
     <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-4 shadow-2xl shadow-slate-950/40">
@@ -62,38 +103,7 @@ export function Fretboard({ positions, frets = 12 }: { positions: Position[]; fr
           })}
         </div>
       </div>
-      <ReactFretboard
-        tuning={tuning}
-        nrOfFrets={frets + 1}
-        skinType="strings"
-        noteType="pc"
-        showNotes={false}
-        showSelectionLabels={true}
-        highlightSelections={true}
-        showPositionLabels={true}
-        selectedLocations={selectedLocations}
-        theme={{
-          background: 'transparent',
-          fontSize: 12,
-          dimensions: {
-            openWidth: 8,
-            nutWidth: 0.75,
-            stringHeight: 34,
-          },
-          skins: {
-            strings: {
-              highlightSize: 88,
-              highlightBorder: '1px solid rgba(255,255,255,0.2)',
-            },
-          },
-          statusMap: {
-            selected: '#38bdf8',
-            unselected: '#0f172a',
-            root: '#f97316',
-            tone: '#0ea5e9',
-          },
-        }}
-      />
+      <div ref={containerRef} className="overflow-x-auto" />
     </div>
   );
 }
