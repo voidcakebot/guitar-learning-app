@@ -11,13 +11,6 @@ export default async function HomePage() {
     <AppShell>
       <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
         <div className="card space-y-5">
-          <span className="badge">Guitar learning app</span>
-          <div className="space-y-3">
-            <h1 className="text-4xl font-semibold tracking-tight text-white">Learn guitar without drowning in theory.</h1>
-            <p className="max-w-2xl text-slate-300">
-              Built-in guitar knowledge gives you chords, scales, theory, tuning, and fretboard logic from day one. Your dashboard, reviews, and progress stay personal to what you actually decide to learn.
-            </p>
-          </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/dashboard" className="button-primary">Open dashboard</Link>
             <Link href="/library" className="button-secondary">Browse library</Link>
