@@ -2,10 +2,9 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 const nav = [
-  { href: '/', label: 'Home' },
-  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/', label: 'Learning now' },
+  { href: '/review', label: 'Anki review' },
   { href: '/library', label: 'Library' },
-  { href: '/review', label: 'Review' },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
