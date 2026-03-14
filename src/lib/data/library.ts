@@ -48,7 +48,7 @@ export type LibraryEntry = {
 
 const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const standardTuning = ['E', 'A', 'D', 'G', 'B', 'E'];
-const roots = ['C', 'D', 'E', 'F', 'G', 'A'];
+const roots = [...chromaticNotes];
 
 const chordBlueprints = [
   { symbol: '', label: 'major', tags: ['triad', 'major'] },

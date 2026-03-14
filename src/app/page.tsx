@@ -8,9 +8,9 @@ export default async function HomePage() {
   const dashboard = await getDashboardData();
   const stats = [
     {
-      label: 'Built-in lessons',
+      label: 'Library items',
       value: libraryEntries.length.toString().padStart(2, '0'),
-      note: 'knowledge blocks loaded',
+      note: 'generated chord + scale entries',
     },
     {
       label: 'Learning items',
