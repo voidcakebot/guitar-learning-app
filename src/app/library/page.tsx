@@ -4,8 +4,8 @@ import { AppShell } from '@/components/app-shell';
 import { libraryEntries } from '@/lib/data/library';
 
 const tabs = [
+  { key: 'chords', label: 'Chords' },
   { key: 'scales', label: 'Scales' },
-  { key: 'chords', label: 'Akkorde' },
 ] as const;
 
 export default async function LibraryPage({
