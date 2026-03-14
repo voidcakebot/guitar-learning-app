@@ -13,9 +13,13 @@ type Position = {
 const tuning = ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'];
 const positionWindows = [
   { key: 'open', label: 'Open', start: 0, end: 4 },
-  { key: 'mid-low', label: '3–7', start: 3, end: 7 },
-  { key: 'mid', label: '5–9', start: 5, end: 9 },
-  { key: 'high', label: '7–12', start: 7, end: 12 },
+  { key: 'pos-1', label: '1', start: 1, end: 5 },
+  { key: 'pos-2', label: '2', start: 2, end: 6 },
+  { key: 'pos-3', label: '3', start: 3, end: 7 },
+  { key: 'pos-4', label: '4', start: 4, end: 8 },
+  { key: 'pos-5', label: '5', start: 5, end: 9 },
+  { key: 'pos-7', label: '7', start: 7, end: 11 },
+  { key: 'pos-9', label: '9', start: 9, end: 12 },
 ] as const;
 
 export function Fretboard({ positions, frets = 12 }: { positions: Position[]; frets?: number }) {
