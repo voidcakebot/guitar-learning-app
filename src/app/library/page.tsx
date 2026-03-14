@@ -24,18 +24,6 @@ export default function LibraryPage() {
   return (
     <AppShell>
       <div className="space-y-8">
-        <div className="card">
-          <span className="badge">Tonal reference</span>
-          <h1 className="mt-4 text-3xl font-semibold text-white">Browse all chords and scales</h1>
-          <p className="mt-2 max-w-3xl text-slate-300">
-            The library is now focused on one job: letting you browse generated chord and scale entries from Tonal.js, then add what you actually learned into your own study flow.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-300">
-            <span className="badge">{chords.length} chords</span>
-            <span className="badge">{scales.length} scales</span>
-          </div>
-        </div>
-
         {sections.map((section) => (
           <section key={section.key} className="space-y-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
