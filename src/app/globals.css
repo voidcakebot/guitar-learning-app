@@ -4,32 +4,30 @@
   color-scheme: dark;
   --font-display: "Cormorant Garamond", serif;
   --font-body: "IBM Plex Sans", sans-serif;
-  --bg-0: #09070b;
-  --bg-1: #120f17;
-  --bg-2: #1f1821;
-  --panel: rgba(30, 22, 28, 0.72);
-  --panel-strong: rgba(43, 31, 38, 0.88);
-  --line: rgba(255, 214, 153, 0.16);
-  --text: #f6efe8;
-  --muted: #c7b8ab;
-  --accent: #f59e0b;
-  --accent-soft: #fcd34d;
-  --accent-deep: #7c2d12;
+  --bg-0: #061018;
+  --bg-1: #091723;
+  --bg-2: #0d2030;
+  --panel: rgba(7, 21, 33, 0.76);
+  --line: rgba(93, 227, 255, 0.18);
+  --text: #ecf8ff;
+  --muted: #8fb4c8;
+  --accent: #67e8f9;
+  --accent-soft: #bae6fd;
+  --accent-deep: #0f766e;
 }
 
 html {
   background:
-    radial-gradient(circle at top, rgba(245, 158, 11, 0.16), transparent 30%),
-    radial-gradient(circle at 20% 20%, rgba(120, 53, 15, 0.25), transparent 24%),
-    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 50%, #050507 100%);
+    radial-gradient(circle at top left, rgba(103, 232, 249, 0.16), transparent 26%),
+    radial-gradient(circle at 85% 10%, rgba(59, 130, 246, 0.14), transparent 22%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 44%, #040a10 100%);
 }
 
 body {
   min-height: 100vh;
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at top right, rgba(245, 158, 11, 0.08), transparent 24%),
-    linear-gradient(180deg, rgba(12, 9, 14, 0.92) 0%, rgba(7, 6, 8, 0.98) 100%);
+    linear-gradient(180deg, rgba(5, 13, 22, 0.9) 0%, rgba(4, 10, 16, 0.98) 100%);
   color: var(--text);
   letter-spacing: 0.01em;
 }
@@ -39,12 +37,23 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.28;
+  opacity: 0.42;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 24px 24px;
-  mask-image: radial-gradient(circle at center, black 38%, transparent 88%);
+    linear-gradient(rgba(103, 232, 249, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(103, 232, 249, 0.045) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px;
+  mask-image: radial-gradient(circle at center, black 45%, transparent 92%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(103, 232, 249, 0.08), transparent 16%),
+    radial-gradient(circle at 70% 35%, rgba(14, 165, 233, 0.07), transparent 20%),
+    radial-gradient(circle at 60% 85%, rgba(56, 189, 248, 0.06), transparent 18%);
 }
 
 h1,
@@ -52,61 +61,71 @@ h2,
 h3,
 .display-font {
   font-family: var(--font-display);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
 }
 
 .card {
-  @apply rounded-[2rem] border p-6 shadow-2xl backdrop-blur-xl;
+  @apply rounded-[1.75rem] border p-6 shadow-2xl backdrop-blur-xl;
+  position: relative;
   border-color: var(--line);
   background:
-    linear-gradient(180deg, rgba(54, 39, 47, 0.72) 0%, rgba(19, 15, 20, 0.82) 100%),
+    linear-gradient(180deg, rgba(12, 33, 49, 0.78) 0%, rgba(7, 19, 30, 0.9) 100%),
     var(--panel);
   box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 244, 228, 0.05);
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(186, 230, 253, 0.07);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.08), transparent 36%, transparent 70%, rgba(186, 230, 253, 0.04));
 }
 
 .badge {
-  @apply inline-flex items-center rounded-full px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.3em];
-  border: 1px solid rgba(252, 211, 77, 0.22);
+  @apply inline-flex items-center rounded-full px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.34em];
+  border: 1px solid rgba(103, 232, 249, 0.24);
   color: var(--accent-soft);
-  background: rgba(245, 158, 11, 0.08);
+  background: rgba(8, 47, 73, 0.42);
 }
 
 .button-primary {
   @apply inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition;
-  color: #1a0f07;
-  background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 55%, #fb923c 100%);
-  box-shadow: 0 12px 30px rgba(245, 158, 11, 0.26);
+  color: #04131b;
+  background: linear-gradient(135deg, #a5f3fc 0%, #67e8f9 52%, #38bdf8 100%);
+  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.22);
 }
 
 .button-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 36px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 16px 36px rgba(56, 189, 248, 0.28);
 }
 
 .button-secondary {
   @apply inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition;
-  border: 1px solid rgba(255, 237, 213, 0.14);
-  background: rgba(255, 248, 240, 0.04);
-  color: #f8e9db;
+  border: 1px solid rgba(186, 230, 253, 0.16);
+  background: rgba(8, 20, 32, 0.68);
+  color: #e0f2fe;
 }
 
 .button-secondary:hover {
-  border-color: rgba(252, 211, 77, 0.35);
-  background: rgba(255, 248, 240, 0.08);
+  border-color: rgba(103, 232, 249, 0.32);
+  background: rgba(9, 28, 42, 0.92);
 }
 
 input,
 textarea,
 select {
   @apply w-full rounded-2xl px-4 py-3 text-sm outline-none ring-0;
-  border: 1px solid rgba(255, 237, 213, 0.12);
-  background: rgba(17, 14, 18, 0.8);
+  border: 1px solid rgba(186, 230, 253, 0.14);
+  background: rgba(7, 17, 28, 0.82);
   color: var(--text);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #8e7f73;
+  color: #61839a;
 }
