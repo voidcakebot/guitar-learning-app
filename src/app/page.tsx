@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { AppShell } from '@/components/app-shell';
-import { libraryEntries } from '@/lib/data/library';
+import { knowledgeEngineSummary, libraryEntries } from '@/lib/data/library';
 import { getDashboardData } from '@/lib/db/store';
 
 export default async function HomePage() {
@@ -15,7 +15,7 @@ export default async function HomePage() {
           <div className="space-y-3">
             <h1 className="text-4xl font-semibold tracking-tight text-white">Learn guitar without drowning in theory.</h1>
             <p className="max-w-2xl text-slate-300">
-              Built-in guitar knowledge gives you chords, scales, and theory from day one. Your dashboard, reviews, and progress stay personal to what you actually decide to learn.
+              Built-in guitar knowledge gives you chords, scales, theory, tuning, and fretboard logic from day one. Your dashboard, reviews, and progress stay personal to what you actually decide to learn.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -39,13 +39,13 @@ export default async function HomePage() {
         </div>
 
         <div className="card">
-          <span className="badge">How it works</span>
+          <span className="badge">Knowledge engine</span>
           <ul className="mt-4 space-y-3 text-sm text-slate-300">
-            <li>• Guitar knowledge ships with the app.</li>
-            <li>• Your learning list turns knowledge into personal practice items.</li>
-            <li>• Flashcards are created automatically when you add something.</li>
-            <li>• Reviews stay focused on what you actually learned.</li>
-            <li>• The fretboard view stays front and center on detail pages.</li>
+            <li>• {knowledgeEngineSummary.chromaticNotes.length} chromatic notes</li>
+            <li>• {knowledgeEngineSummary.intervalSystem.length} interval labels</li>
+            <li>• {Object.keys(knowledgeEngineSummary.chordTypes).length} chord formulas</li>
+            <li>• {Object.keys(knowledgeEngineSummary.scaleTypes).length} scale formulas</li>
+            <li>• Standard tuning: {knowledgeEngineSummary.standardTuning.join(' • ')}</li>
           </ul>
         </div>
       </section>

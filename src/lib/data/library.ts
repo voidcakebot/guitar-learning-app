@@ -1,3 +1,13 @@
+import { chordPatternFamilies } from '@/data/guitar/chord-patterns';
+import { scalePatternFamilies } from '@/data/guitar/scale-patterns';
+import { tunings } from '@/data/guitar/tunings';
+import { chordTypes } from '@/data/music/chord-types';
+import { intervalSystem } from '@/data/music/intervals';
+import { scaleTypes } from '@/data/music/scale-types';
+import { theoryTopics } from '@/data/music/theory';
+import { buildChordNotes } from '@/lib/music/chord-generator';
+import { buildScaleNotes } from '@/lib/music/scale-generator';
+
 export type EntryType = 'chord' | 'scale' | 'theory';
 
 export type Pattern = {
@@ -55,6 +65,17 @@ export const focusOptions: Array<{ value: LearningFocus; label: string; descript
   { value: 'alternative-shapes', label: 'Alternative shapes', description: 'Explore movable or alternate fingerings later.' },
 ];
 
+export const knowledgeEngineSummary = {
+  chromaticNotes: ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
+  intervalSystem,
+  chordTypes,
+  scaleTypes,
+  standardTuning: tunings.standard,
+  chordPatternFamilies,
+  scalePatternFamilies,
+  theoryTopics,
+};
+
 export const libraryEntries: LibraryEntry[] = [
   {
     id: 'chord-c-major',
@@ -65,8 +86,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['open-chord', 'major', 'beginner'],
     rootNote: 'C',
     quality: 'major',
-    formula: ['1', '3', '5'],
-    notes: ['C', 'E', 'G'],
+    formula: [...chordTypes.major],
+    notes: buildChordNotes('C', 'major'),
     relatedSlugs: ['c-major-scale', 'major-chord-construction'],
     nextStepSlugs: ['g-major', 'a-minor'],
     recommendedFocus: beginnerFocus,
@@ -97,8 +118,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['open-chord', 'major', 'beginner'],
     rootNote: 'G',
     quality: 'major',
-    formula: ['1', '3', '5'],
-    notes: ['G', 'B', 'D'],
+    formula: [...chordTypes.major],
+    notes: buildChordNotes('G', 'major'),
     relatedSlugs: ['major-chord-construction', 'c-major', 'd-major'],
     nextStepSlugs: ['d-major', 'e-minor'],
     recommendedFocus: beginnerFocus,
@@ -130,8 +151,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['open-chord', 'minor', 'beginner'],
     rootNote: 'A',
     quality: 'minor',
-    formula: ['1', 'b3', '5'],
-    notes: ['A', 'C', 'E'],
+    formula: [...chordTypes.minor],
+    notes: buildChordNotes('A', 'minor'),
     relatedSlugs: ['natural-minor', 'c-major', 'minor-pentatonic-a'],
     nextStepSlugs: ['e-minor', 'minor-pentatonic-a'],
     recommendedFocus: beginnerFocus,
@@ -162,8 +183,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['open-chord', 'minor', 'beginner'],
     rootNote: 'E',
     quality: 'minor',
-    formula: ['1', 'b3', '5'],
-    notes: ['E', 'G', 'B'],
+    formula: [...chordTypes.minor],
+    notes: buildChordNotes('E', 'minor'),
     relatedSlugs: ['g-major', 'natural-minor'],
     nextStepSlugs: ['d-major', 'a-minor'],
     recommendedFocus: beginnerFocus,
@@ -195,8 +216,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['open-chord', 'major', 'beginner'],
     rootNote: 'D',
     quality: 'major',
-    formula: ['1', '3', '5'],
-    notes: ['D', 'F#', 'A'],
+    formula: [...chordTypes.major],
+    notes: buildChordNotes('D', 'major'),
     relatedSlugs: ['g-major', 'major-chord-construction'],
     nextStepSlugs: ['c-major', 'g-major'],
     recommendedFocus: beginnerFocus,
@@ -226,8 +247,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['scale', 'major', 'theory', 'beginner'],
     rootNote: 'C',
     scaleType: 'major',
-    formula: ['1', '2', '3', '4', '5', '6', '7'],
-    notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
+    formula: [...scaleTypes.major],
+    notes: buildScaleNotes('C', 'major'),
     relatedSlugs: ['c-major', 'major-chord-construction', 'intervals-on-guitar'],
     nextStepSlugs: ['minor-pentatonic-a'],
     recommendedFocus: ['notes', 'formula', 'fretboard', 'theory'],
@@ -259,8 +280,8 @@ export const libraryEntries: LibraryEntry[] = [
     tags: ['scale', 'minor', 'pentatonic', 'beginner'],
     rootNote: 'A',
     scaleType: 'minor pentatonic',
-    formula: ['1', 'b3', '4', '5', 'b7'],
-    notes: ['A', 'C', 'D', 'E', 'G'],
+    formula: [...scaleTypes.minorPentatonic],
+    notes: buildScaleNotes('A', 'minorPentatonic'),
     relatedSlugs: ['a-minor', 'natural-minor', 'caged-system-basics'],
     nextStepSlugs: ['c-major-scale'],
     recommendedFocus: ['notes', 'formula', 'fretboard', 'theory'],
@@ -290,7 +311,7 @@ export const libraryEntries: LibraryEntry[] = [
     summary: 'How major triads are built from the 1st, 3rd, and 5th scale degrees.',
     tags: ['theory', 'intervals', 'triads', 'beginner'],
     topic: 'chord construction',
-    formula: ['1', '3', '5'],
+    formula: [...chordTypes.major],
     relatedSlugs: ['c-major', 'g-major', 'c-major-scale'],
     nextStepSlugs: ['minor-chord-construction'],
     recommendedFocus: ['formula', 'theory', 'notes'],
@@ -308,7 +329,7 @@ export const libraryEntries: LibraryEntry[] = [
     summary: 'Minor triads keep the 5th but flatten the 3rd for a darker sound.',
     tags: ['theory', 'intervals', 'triads', 'beginner'],
     topic: 'chord construction',
-    formula: ['1', 'b3', '5'],
+    formula: [...chordTypes.minor],
     relatedSlugs: ['a-minor', 'e-minor', 'natural-minor'],
     nextStepSlugs: ['natural-minor'],
     recommendedFocus: ['formula', 'theory', 'notes'],
@@ -326,7 +347,7 @@ export const libraryEntries: LibraryEntry[] = [
     summary: 'The minor sound comes from flattening the 3rd, 6th, and 7th degrees.',
     tags: ['theory', 'minor', 'scale-construction', 'beginner'],
     topic: 'scale construction',
-    formula: ['1', '2', 'b3', '4', '5', 'b6', 'b7'],
+    formula: [...scaleTypes.naturalMinor],
     relatedSlugs: ['a-minor', 'minor-pentatonic-a', 'minor-chord-construction'],
     nextStepSlugs: ['intervals-on-guitar'],
     recommendedFocus: ['formula', 'theory', 'notes'],
@@ -344,7 +365,7 @@ export const libraryEntries: LibraryEntry[] = [
     summary: 'Intervals are the distance language behind chords, scales, and fretboard logic.',
     tags: ['theory', 'intervals', 'beginner'],
     topic: 'intervals',
-    formula: ['1', 'b2', '2', 'b3', '3', '4', '#4', '5', 'b6', '6', 'b7', '7'],
+    formula: [...intervalSystem],
     relatedSlugs: ['major-chord-construction', 'natural-minor', 'c-major-scale'],
     nextStepSlugs: ['caged-system-basics'],
     recommendedFocus: ['formula', 'theory', 'fretboard'],
@@ -369,6 +390,23 @@ export const libraryEntries: LibraryEntry[] = [
       'The CAGED system uses five familiar open-shape families to navigate the neck.',
       'It helps you connect chords, scales, and arpeggios instead of memorizing isolated boxes.',
       'For V1, treat it as a map concept, not a full advanced curriculum yet.'
+    ]
+  },
+  {
+    id: 'theory-basic-harmonization',
+    slug: 'basic-harmonization',
+    type: 'theory',
+    title: 'Basic Harmonization',
+    summary: 'Harmonization explains how scales produce families of chords that work together.',
+    tags: ['theory', 'harmonization', 'relationships'],
+    topic: 'basic harmonization',
+    relatedSlugs: ['c-major-scale', 'major-chord-construction', 'natural-minor'],
+    nextStepSlugs: ['caged-system-basics'],
+    recommendedFocus: ['theory', 'formula', 'notes'],
+    content: [
+      'Harmonizing a scale means building chords from each degree of the scale.',
+      'This is how progressions start to feel logical instead of random.',
+      'For beginners, it is enough to see that chords and scales belong to the same note world.'
     ]
   }
 ];
