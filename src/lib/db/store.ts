@@ -115,7 +115,7 @@ export async function getOrCreateDefaultProfile() {
   const id = crypto.randomUUID();
   const rows = (await sql`
     INSERT INTO learning_profiles (id, name, description)
-    VALUES (${id}, ${'Guitar Fundamentals'}, ${'Your beginner-to-intermediate guitar learning path'})
+    VALUES (${id}, ${'Guitar Fundamentals'}, ${'Your guitar learning path'})
     RETURNING *
   `) as Profile[];
   return rows[0];

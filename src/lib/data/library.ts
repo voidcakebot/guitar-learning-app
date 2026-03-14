@@ -54,7 +54,7 @@ export type LibraryEntry = {
   recommendedFocus?: LearningFocus[];
 };
 
-const beginnerFocus: LearningFocus[] = ['chord-shape', 'notes', 'formula', 'fretboard', 'theory'];
+const defaultFocus: LearningFocus[] = ['chord-shape', 'notes', 'formula', 'fretboard', 'theory'];
 
 export const focusOptions: Array<{ value: LearningFocus; label: string; description: string }> = [
   { value: 'chord-shape', label: 'Chord shape', description: 'Remember the physical shape and fingering.' },
@@ -62,8 +62,7 @@ export const focusOptions: Array<{ value: LearningFocus; label: string; descript
   { value: 'formula', label: 'Formula', description: 'Learn the interval recipe that builds it.' },
   { value: 'fretboard', label: 'Fretboard', description: 'Recognize roots and important positions on the neck.' },
   { value: 'theory', label: 'Theory explanation', description: 'Understand what the shape means and why it works.' },
-  { value: 'alternative-shapes', label: 'Alternative shapes', description: 'Explore movable or alternate fingerings later.' },
-];
+  { value: 'alternative-shapes', label: 'Alternative shapes', description: 'Explore movable or alternate fingerings later.' }];
 
 export const knowledgeEngineSummary = {
   chromaticNotes: ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'],
@@ -83,14 +82,14 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'chord',
     title: 'C Major',
     summary: 'The foundational open C major chord with bright, stable harmony.',
-    tags: ['open-chord', 'major', 'beginner'],
+    tags: ['open-chord', 'major'],
     rootNote: 'C',
     quality: 'major',
     formula: [...chordTypes.major],
     notes: buildChordNotes('C', 'major'),
     relatedSlugs: ['c-major-scale', 'major-chord-construction'],
     nextStepSlugs: ['g-major', 'a-minor'],
-    recommendedFocus: beginnerFocus,
+    recommendedFocus: defaultFocus,
     patterns: [
       {
         id: 'pattern-c-major-open',
@@ -114,15 +113,15 @@ export const libraryEntries: LibraryEntry[] = [
     slug: 'g-major',
     type: 'chord',
     title: 'G Major',
-    summary: 'A versatile open chord that anchors many beginner progressions.',
-    tags: ['open-chord', 'major', 'beginner'],
+    summary: 'A versatile open chord that anchors many classic progressions.',
+    tags: ['open-chord', 'major'],
     rootNote: 'G',
     quality: 'major',
     formula: [...chordTypes.major],
     notes: buildChordNotes('G', 'major'),
     relatedSlugs: ['major-chord-construction', 'c-major', 'd-major'],
     nextStepSlugs: ['d-major', 'e-minor'],
-    recommendedFocus: beginnerFocus,
+    recommendedFocus: defaultFocus,
     patterns: [
       {
         id: 'pattern-g-major-open',
@@ -147,15 +146,15 @@ export const libraryEntries: LibraryEntry[] = [
     slug: 'a-minor',
     type: 'chord',
     title: 'A Minor',
-    summary: 'A beginner-friendly minor chord with the same shape family as C major.',
-    tags: ['open-chord', 'minor', 'beginner'],
+    summary: 'A familiar minor chord with the same shape family as C major.',
+    tags: ['open-chord', 'minor'],
     rootNote: 'A',
     quality: 'minor',
     formula: [...chordTypes.minor],
     notes: buildChordNotes('A', 'minor'),
     relatedSlugs: ['natural-minor', 'c-major', 'minor-pentatonic-a'],
     nextStepSlugs: ['e-minor', 'minor-pentatonic-a'],
-    recommendedFocus: beginnerFocus,
+    recommendedFocus: defaultFocus,
     patterns: [
       {
         id: 'pattern-a-minor-open',
@@ -180,14 +179,14 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'chord',
     title: 'E Minor',
     summary: 'One of the easiest open chords and a perfect first minor sound.',
-    tags: ['open-chord', 'minor', 'beginner'],
+    tags: ['open-chord', 'minor'],
     rootNote: 'E',
     quality: 'minor',
     formula: [...chordTypes.minor],
     notes: buildChordNotes('E', 'minor'),
     relatedSlugs: ['g-major', 'natural-minor'],
     nextStepSlugs: ['d-major', 'a-minor'],
-    recommendedFocus: beginnerFocus,
+    recommendedFocus: defaultFocus,
     patterns: [
       {
         id: 'pattern-e-minor-open',
@@ -212,15 +211,15 @@ export const libraryEntries: LibraryEntry[] = [
     slug: 'd-major',
     type: 'chord',
     title: 'D Major',
-    summary: 'A bright upper-string chord that appears in countless beginner songs.',
-    tags: ['open-chord', 'major', 'beginner'],
+    summary: 'A bright upper-string chord that appears in countless songs.',
+    tags: ['open-chord', 'major'],
     rootNote: 'D',
     quality: 'major',
     formula: [...chordTypes.major],
     notes: buildChordNotes('D', 'major'),
     relatedSlugs: ['g-major', 'major-chord-construction'],
     nextStepSlugs: ['c-major', 'g-major'],
-    recommendedFocus: beginnerFocus,
+    recommendedFocus: defaultFocus,
     patterns: [
       {
         id: 'pattern-d-major-open',
@@ -244,7 +243,7 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'scale',
     title: 'C Major Scale',
     summary: 'The no-sharps, no-flats major scale used to understand interval structure.',
-    tags: ['scale', 'major', 'theory', 'beginner'],
+    tags: ['scale', 'major', 'theory'],
     rootNote: 'C',
     scaleType: 'major',
     formula: [...scaleTypes.major],
@@ -276,8 +275,8 @@ export const libraryEntries: LibraryEntry[] = [
     slug: 'minor-pentatonic-a',
     type: 'scale',
     title: 'A Minor Pentatonic',
-    summary: 'A high-value beginner scale for riffs, improvisation, and pattern awareness.',
-    tags: ['scale', 'minor', 'pentatonic', 'beginner'],
+    summary: 'A high-value scale for riffs, improvisation, and pattern awareness.',
+    tags: ['scale', 'minor', 'pentatonic'],
     rootNote: 'A',
     scaleType: 'minor pentatonic',
     formula: [...scaleTypes.minorPentatonic],
@@ -309,7 +308,7 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Major Chord Construction',
     summary: 'How major triads are built from the 1st, 3rd, and 5th scale degrees.',
-    tags: ['theory', 'intervals', 'triads', 'beginner'],
+    tags: ['theory', 'intervals', 'triads'],
     topic: 'chord construction',
     formula: [...chordTypes.major],
     relatedSlugs: ['c-major', 'g-major', 'c-major-scale'],
@@ -327,7 +326,7 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Minor Chord Construction',
     summary: 'Minor triads keep the 5th but flatten the 3rd for a darker sound.',
-    tags: ['theory', 'intervals', 'triads', 'beginner'],
+    tags: ['theory', 'intervals', 'triads'],
     topic: 'chord construction',
     formula: [...chordTypes.minor],
     relatedSlugs: ['a-minor', 'e-minor', 'natural-minor'],
@@ -345,7 +344,7 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Natural Minor Basics',
     summary: 'The minor sound comes from flattening the 3rd, 6th, and 7th degrees.',
-    tags: ['theory', 'minor', 'scale-construction', 'beginner'],
+    tags: ['theory', 'minor', 'scale-construction'],
     topic: 'scale construction',
     formula: [...scaleTypes.naturalMinor],
     relatedSlugs: ['a-minor', 'minor-pentatonic-a', 'minor-chord-construction'],
@@ -363,7 +362,7 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Intervals on Guitar',
     summary: 'Intervals are the distance language behind chords, scales, and fretboard logic.',
-    tags: ['theory', 'intervals', 'beginner'],
+    tags: ['theory', 'intervals'],
     topic: 'intervals',
     formula: [...intervalSystem],
     relatedSlugs: ['major-chord-construction', 'natural-minor', 'c-major-scale'],
@@ -406,12 +405,10 @@ export const libraryEntries: LibraryEntry[] = [
     content: [
       'Harmonizing a scale means building chords from each degree of the scale.',
       'This is how progressions start to feel logical instead of random.',
-      'For beginners, it is enough to see that chords and scales belong to the same note world.'
+      'At this stage, it is enough to see that chords and scales belong to the same note world.'
     ]
   }
 ];
-
-export const beginnerEntrySlugs = ['c-major', 'g-major', 'a-minor', 'e-minor', 'd-major'];
 
 export const libraryBySlug = new Map(libraryEntries.map((entry) => [entry.slug, entry]));
 export const defaultEntrySlug = 'c-major';
@@ -432,8 +429,3 @@ export function getNextSteps(entry: LibraryEntry) {
     .filter((value): value is LibraryEntry => Boolean(value));
 }
 
-export function getBeginnerEntries() {
-  return beginnerEntrySlugs
-    .map((slug) => libraryBySlug.get(slug))
-    .filter((value): value is LibraryEntry => Boolean(value));
-}

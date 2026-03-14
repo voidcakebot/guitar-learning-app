@@ -37,11 +37,6 @@ export default function LibraryPage() {
                     </div>
                     <h3 className="mt-4 text-xl font-semibold text-white">{entry.title}</h3>
                     <p className="mt-2 text-sm text-slate-300">{entry.summary}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {entry.tags.map((tag) => (
-                        <span key={tag} className="rounded-full bg-white/5 px-3 py-1 text-xs text-slate-300">#{tag}</span>
-                      ))}
-                    </div>
                   </Link>
                 ))}
               </div>
