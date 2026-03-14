@@ -25,9 +25,9 @@ export default async function HomePage() {
               <p className="mt-2 text-2xl font-semibold text-white">{dashboard.dueCards.length}</p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <Link href="/dashboard" className="button-primary">Open dashboard</Link>
-            <Link href="/library" className="button-secondary">Browse library</Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/dashboard" className="button-primary">Dashboard</Link>
+            <Link href="/library" className="button-secondary">Library</Link>
           </div>
         </div>
 
