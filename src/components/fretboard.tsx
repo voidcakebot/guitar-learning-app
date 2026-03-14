@@ -5,7 +5,7 @@ type Position = {
   isRoot?: boolean;
 };
 
-export function Fretboard({ positions, frets = 5 }: { positions: Position[]; frets?: number }) {
+export function Fretboard({ positions, frets = 12 }: { positions: Position[]; frets?: number }) {
   const strings = [6, 5, 4, 3, 2, 1];
   const width = 720;
   const height = 280;
@@ -22,7 +22,7 @@ export function Fretboard({ positions, frets = 5 }: { positions: Position[]; fre
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-white">Fretboard view</p>
-          <p className="text-xs text-slate-400">Roots are orange. Other target tones are blue.</p>
+          <p className="text-xs text-slate-400">Full-neck target map. Roots are orange. Other target tones are blue.</p>
         </div>
         <div className="flex gap-3 text-xs text-slate-300">
           <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-orange-500" /> Root</span>

@@ -4,16 +4,24 @@ import { notFound } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { Fretboard } from '@/components/fretboard';
 import { focusOptions, getLibraryEntry } from '@/lib/data/library';
-import { getDashboardData } from '@/lib/db/store';
+import { ensureDb, getDashboardData } from '@/lib/db/store';
+import { buildFretboardPositions } from '@/lib/guitar/fretboard-map';
 
 export default async function LibraryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const entry = getLibraryEntry(slug);
   if (!entry) notFound();
 
+  await ensureDb();
   const dashboard = await getDashboardData();
   const alreadyLearning = dashboard.learningItems.find((item) => item.entry_slug === entry.slug);
   const defaultPattern = entry.patterns?.[0];
+  const fretboardPositions = buildFretboardPositions({
+    notes: entry.notes ?? [],
+    rootNote: entry.rootNote,
+    maxFret: 12,
+  });
+
   return (
     <AppShell>
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
@@ -32,25 +40,17 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
 
-          {defaultPattern?.positions?.length ? (
+          {fretboardPositions.length ? (
             <div className="card">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <span className="badge">Fretboard centerpiece</span>
-                  <p className="mt-2 text-sm text-slate-300">See the important tones before you think about the supporting text.</p>
+                  <span className="badge">Neck view</span>
+                  <p className="mt-2 text-sm text-slate-300">Visual note map for this {entry.type} across the full neck.</p>
                 </div>
-                <span className="badge">{defaultPattern.name}</span>
+                <span className="badge">12 frets</span>
               </div>
               <div className="mt-5">
-                <Fretboard
-                  frets={Math.max(5, ...defaultPattern.positions.map((position) => position.fret))}
-                  positions={defaultPattern.positions.map((position) => ({
-                    stringNumber: position.stringNumber,
-                    fret: position.fret,
-                    label: position.interval,
-                    isRoot: position.isRoot,
-                  }))}
-                />
+                <Fretboard frets={12} positions={fretboardPositions} />
               </div>
             </div>
           ) : null}
