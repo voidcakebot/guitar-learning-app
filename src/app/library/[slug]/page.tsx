@@ -41,18 +41,26 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
 
   return (
     <AppShell>
-      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">
-          <div className="card">
-            <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="card overflow-hidden p-4 sm:p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <span className="badge">{entry.type}</span>
-                <h1 className="mt-4 text-4xl font-semibold text-white">{entry.title}</h1>
+                <h1 className="mt-4 display-font text-4xl text-white sm:text-5xl">{entry.title}</h1>
+                <p className="mt-3 text-sm leading-6 text-slate-300">
+                  Root {entry.rootNote ?? '—'} · Formula {entry.formula?.join(' · ') ?? '—'}
+                </p>
               </div>
-              <div className="min-w-64 rounded-2xl border border-white/10 p-4 text-sm text-slate-300">
-                <p>Root note: {entry.rootNote ?? '—'}</p>
-                <p className="mt-2">Formula: {entry.formula?.join(' · ') ?? 'Conceptual content'}</p>
-                <p className="mt-2">Primary pattern: {defaultPattern?.name ?? 'No pattern defined yet'}</p>
+              <div className="grid min-w-0 gap-3 sm:min-w-64">
+                <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-300">
+                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-400">Root note</p>
+                  <p className="mt-2 text-xl font-semibold text-white">{entry.rootNote ?? '—'}</p>
+                </div>
+                <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-300">
+                  <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-400">Primary pattern</p>
+                  <p className="mt-2 text-base font-medium text-white">{defaultPattern?.name ?? 'No pattern defined yet'}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -72,21 +80,18 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
             </div>
           ) : null}
 
-          <div className="card">
-            <span className="badge">Key details</span>
-            <div className="mt-4 space-y-4 text-sm text-slate-300">
-              <div>
-                <p className="text-slate-400">Notes</p>
-                <p className="mt-1 text-white">{entry.notes?.join(', ') ?? 'Not specified yet'}</p>
-              </div>
-              <div>
-                <p className="text-slate-400">Fingering</p>
-                <p className="mt-1 text-white">{defaultPattern?.fingers?.map((finger) => finger ?? 'x').join(' • ') ?? 'No fingering stored yet'}</p>
-              </div>
-              <div>
-                <p className="text-slate-400">Tags</p>
-                <p className="mt-1 text-white">{entry.tags.join(' • ')}</p>
-              </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="card p-4 sm:p-5">
+              <span className="badge">Notes</span>
+              <p className="mt-4 text-sm leading-7 text-white">{entry.notes?.join(', ') ?? 'Not specified yet'}</p>
+            </div>
+            <div className="card p-4 sm:p-5">
+              <span className="badge">Fingering</span>
+              <p className="mt-4 text-sm leading-7 text-white">{defaultPattern?.fingers?.map((finger) => finger ?? 'x').join(' • ') ?? 'No fingering stored yet'}</p>
+            </div>
+            <div className="card p-4 sm:p-5">
+              <span className="badge">Tags</span>
+              <p className="mt-4 text-sm leading-7 text-white">{entry.tags.join(' • ')}</p>
             </div>
           </div>
 
@@ -101,9 +106,9 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="space-y-6">
-          <div className="card">
+          <div className="card p-4 sm:p-6">
             <span className="badge">Add to my learning</span>
-            <p className="mt-3 text-sm text-slate-300">What did you actually learn?</p>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Capture exactly what you learned from this shape or scale so it can become part of your own practice path.</p>
             {alreadyLearning ? (
               <p className="mt-3 rounded-2xl border border-orange-400/30 bg-orange-500/10 px-4 py-3 text-sm text-orange-100">
                 Already added to your learning list.

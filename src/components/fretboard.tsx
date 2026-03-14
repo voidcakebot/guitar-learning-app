@@ -21,9 +21,15 @@ const tuningLabels: Record<number, string> = {
 };
 
 function stringStrokeWidth(stringNumber: number) {
-  if (stringNumber >= 5) return 3.2;
-  if (stringNumber >= 3) return 2.4;
-  return 1.7;
+  if (stringNumber >= 5) return 3.6;
+  if (stringNumber >= 3) return 2.6;
+  return 1.8;
+}
+
+function stringOpacity(stringNumber: number) {
+  if (stringNumber >= 5) return 0.95;
+  if (stringNumber >= 3) return 0.82;
+  return 0.72;
 }
 
 export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positions: NeckViewPosition[]; frets?: number; mutedStrings?: number[] }) {
@@ -156,10 +162,10 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
                   y1={y}
                   x2={right}
                   y2={y}
-                  stroke="#e5e7eb"
+                  stroke="#f8fafc"
                   strokeWidth={stringStrokeWidth(stringNumber)}
                   strokeLinecap="round"
-                  opacity={0.95}
+                  opacity={stringOpacity(stringNumber)}
                 />
               </g>
             );
