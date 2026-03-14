@@ -14,7 +14,7 @@ export default async function LibraryPage({
   searchParams?: Promise<{ tab?: string }>;
 }) {
   const params = (await searchParams) ?? {};
-  const activeTab = params.tab === 'chords' ? 'chords' : 'scales';
+  const activeTab = params.tab === 'scales' ? 'scales' : 'chords';
   const entries = libraryEntries.filter((entry) => entry.type === activeTab.slice(0, -1));
 
   return (
