@@ -11,13 +11,13 @@ export default async function ReviewPage() {
     <AppShell>
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="card">
-          <span className="badge">Review queue</span>
-          <h1 className="mt-4 text-3xl font-semibold text-white">{cards.length} card{cards.length === 1 ? '' : 's'} ready</h1>
-          <p className="mt-2 text-sm text-slate-300">The MVP review loop uses a simplified SM-2 style scheduler.</p>
+          <span className="badge">Review</span>
+          <h1 className="mt-4 text-3xl font-semibold text-white">{cards.length} {cards.length === 1 ? 'card' : 'cards'} ready</h1>
+          <p className="mt-2 text-sm text-slate-300">Build recall with quick, focused reviews. New learning items generate cards automatically.</p>
         </div>
 
         {!current ? (
-          <div className="card text-center text-slate-300">No cards are due yet. Add a library entry to your profile first.</div>
+          <div className="card text-center text-slate-300">No cards are due right now. Start a chord or scale from the library and your first review session will be ready immediately.</div>
         ) : (
           <div className="card space-y-6">
             <div>

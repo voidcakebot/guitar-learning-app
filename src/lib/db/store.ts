@@ -2,7 +2,7 @@ import { neon } from '@neondatabase/serverless';
 
 import { generateFlashcards } from '@/lib/domain/flashcards';
 import { calculateNextReview, type ReviewRating, type ReviewSchedule } from '@/lib/domain/review';
-import { defaultEntrySlug, getLibraryEntry, libraryEntries } from '@/lib/data/library';
+import { defaultEntrySlug, getLibraryEntry, libraryEntries, type LearningFocus } from '@/lib/data/library';
 import { schemaSql } from '@/lib/db/schema';
 
 export type Profile = {
@@ -52,7 +52,7 @@ export type Flashcard = {
 
 export type DashboardData = {
   profile: Profile;
-  learningItems: Array<LearningItem & { entryTitle: string; entryType: string }>;
+  learningItems: Array<LearningItem & { entryTitle: string; entryType: string; focus_summary: string }>;
   dueCards: Flashcard[];
   recommendations: typeof libraryEntries;
 };
@@ -64,6 +64,33 @@ function getSql() {
   const url = process.env.DATABASE_URL ?? process.env.POSTGRES_URL ?? process.env.POSTGRES_PRISMA_URL;
   if (!url) return null;
   return neon(url);
+}
+
+function parseFocusAreas(value?: string) {
+  return (value ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean) as LearningFocus[];
+}
+
+function createFocusSummary(entrySlug: string, focusAreas: LearningFocus[] | undefined, visibilityMode: string) {
+  const entry = getLibraryEntry(entrySlug);
+  const fallback = entry?.recommendedFocus ?? [];
+  const selected = (focusAreas?.length ? focusAreas : fallback).slice(0, 3);
+  if (!selected.length) return visibilityMode === 'guided' ? 'Guided starter path' : 'General practice focus';
+
+  const labels = selected.map((item) => {
+    switch (item) {
+      case 'chord-shape': return 'Chord shape';
+      case 'notes': return 'Notes';
+      case 'formula': return 'Formula';
+      case 'fretboard': return 'Fretboard';
+      case 'theory': return 'Theory';
+      case 'alternative-shapes': return 'Alternative shapes';
+    }
+  });
+
+  return labels.join(' • ');
 }
 
 export async function ensureDb() {
@@ -88,7 +115,7 @@ export async function getOrCreateDefaultProfile() {
   const id = crypto.randomUUID();
   const rows = (await sql`
     INSERT INTO learning_profiles (id, name, description)
-    VALUES (${id}, ${'Guitar Fundamentals'}, ${'Default MVP learning profile'})
+    VALUES (${id}, ${'Guitar Fundamentals'}, ${'Your beginner-to-intermediate guitar learning path'})
     RETURNING *
   `) as Profile[];
   return rows[0];
@@ -98,6 +125,7 @@ export async function createLearningItem(input: {
   profileId: string;
   entrySlug: string;
   visibilityMode: string;
+  focusAreas?: string;
   note?: string;
 }) {
   await ensureDb();
@@ -105,16 +133,19 @@ export async function createLearningItem(input: {
   const firstPattern = entry.patterns?.[0];
   const cards = generateFlashcards(entry);
   const sql = getSql();
-  if (!sql) return inMemory.createLearningItem(input, cards, firstPattern?.id ?? null);
+  const focusAreas = parseFocusAreas(input.focusAreas);
+
+  if (!sql) return inMemory.createLearningItem(input, cards, firstPattern?.id ?? null, focusAreas);
 
   const id = crypto.randomUUID();
+  const flags = new Set(focusAreas.length ? focusAreas : entry.recommendedFocus ?? []);
   const itemRows = (await sql`
     INSERT INTO learning_items (
       id, profile_id, entry_slug, selected_pattern_id, status, visibility_mode,
-      notes, learned_at, show_formula, show_notes, show_intervals, show_fretboard, show_theory
+      notes, learned_at, show_formula, show_notes, show_intervals, show_fretboard, show_theory, show_alternative_voicings
     ) VALUES (
       ${id}, ${input.profileId}, ${entry.slug}, ${firstPattern?.id ?? null}, ${'learning'}, ${input.visibilityMode},
-      ${input.note ?? null}, NOW(), ${true}, ${true}, ${true}, ${true}, ${true}
+      ${input.note ?? null}, NOW(), ${flags.has('formula')}, ${flags.has('notes')}, ${flags.has('formula')}, ${flags.has('fretboard')}, ${flags.has('theory')}, ${flags.has('alternative-shapes')}
     )
     RETURNING *
   `) as LearningItem[];
@@ -147,10 +178,19 @@ export async function getDashboardData(): Promise<DashboardData> {
 
   const learningItemsWithLibrary = learningItems.map((item) => {
     const entry = getLibraryEntry(item.entry_slug);
+    const focusAreas: LearningFocus[] = [];
+    if (item.show_notes) focusAreas.push('notes');
+    if (item.show_formula || item.show_intervals) focusAreas.push('formula');
+    if (item.show_fretboard) focusAreas.push('fretboard');
+    if (item.show_theory) focusAreas.push('theory');
+    if (item.show_alternative_voicings) focusAreas.push('alternative-shapes');
+    if (!focusAreas.length && entry?.type === 'chord') focusAreas.push('chord-shape');
+
     return {
       ...item,
       entryTitle: entry?.title ?? item.entry_slug,
       entryType: entry?.type ?? 'unknown',
+      focus_summary: createFocusSummary(item.entry_slug, focusAreas, item.visibility_mode),
     };
   });
 
@@ -216,7 +256,7 @@ function createMemoryStore() {
     id: 'memory-profile',
     name: 'Guitar Fundamentals',
     instrument: 'guitar',
-    description: 'In-memory fallback profile used when DATABASE_URL is not set.',
+    description: 'A simple, guided guitar learning space.',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -229,10 +269,13 @@ function createMemoryStore() {
       return profile;
     },
     async createLearningItem(
-      input: { profileId: string; entrySlug: string; visibilityMode: string; note?: string },
+      input: { profileId: string; entrySlug: string; visibilityMode: string; focusAreas?: string; note?: string },
       cards: ReturnType<typeof generateFlashcards>,
       patternId: string | null,
+      focusAreas: LearningFocus[],
     ) {
+      const entry = getLibraryEntry(input.entrySlug) ?? getLibraryEntry(defaultEntrySlug)!;
+      const flags = new Set(focusAreas.length ? focusAreas : entry.recommendedFocus ?? []);
       const item: LearningItem = {
         id: crypto.randomUUID(),
         profile_id: input.profileId,
@@ -241,12 +284,12 @@ function createMemoryStore() {
         custom_title: null,
         status: 'learning',
         visibility_mode: input.visibilityMode,
-        show_formula: true,
-        show_notes: true,
-        show_intervals: true,
-        show_fretboard: true,
-        show_theory: true,
-        show_alternative_voicings: false,
+        show_formula: flags.has('formula'),
+        show_notes: flags.has('notes'),
+        show_intervals: flags.has('formula'),
+        show_fretboard: flags.has('fretboard'),
+        show_theory: flags.has('theory'),
+        show_alternative_voicings: flags.has('alternative-shapes'),
         notes: input.note ?? null,
         learned_at: new Date().toISOString(),
         last_reviewed_at: null,
@@ -278,10 +321,19 @@ function createMemoryStore() {
         .filter((item) => item.profile_id === profileId)
         .map((item) => {
           const entry = getLibraryEntry(item.entry_slug);
+          const focusAreas: LearningFocus[] = [];
+          if (item.show_notes) focusAreas.push('notes');
+          if (item.show_formula || item.show_intervals) focusAreas.push('formula');
+          if (item.show_fretboard) focusAreas.push('fretboard');
+          if (item.show_theory) focusAreas.push('theory');
+          if (item.show_alternative_voicings) focusAreas.push('alternative-shapes');
+          if (!focusAreas.length && entry?.type === 'chord') focusAreas.push('chord-shape');
+
           return {
             ...item,
             entryTitle: entry?.title ?? item.entry_slug,
             entryType: entry?.type ?? 'unknown',
+            focus_summary: createFocusSummary(item.entry_slug, focusAreas, item.visibility_mode),
           };
         });
       const learnedSlugs = new Set(learningItems.map((item) => item.entry_slug));

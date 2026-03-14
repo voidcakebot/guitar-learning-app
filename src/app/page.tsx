@@ -11,12 +11,11 @@ export default async function HomePage() {
     <AppShell>
       <section className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
         <div className="card space-y-5">
-          <span className="badge">MVP overview</span>
+          <span className="badge">Guitar learning app</span>
           <div className="space-y-3">
             <h1 className="text-4xl font-semibold tracking-tight text-white">Learn guitar without drowning in theory.</h1>
             <p className="max-w-2xl text-slate-300">
-              Fretboard Pilot keeps canonical guitar knowledge in code, then layers your actual learning state on top in Postgres.
-              The result is a clean dashboard, browseable library, focused detail pages, and a lightweight review loop.
+              Built-in guitar knowledge gives you chords, scales, and theory from day one. Your dashboard, reviews, and progress stay personal to what you actually decide to learn.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -25,8 +24,8 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4">
-              <p className="text-sm text-blue-200">Static library</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{libraryEntries.length} entries</p>
+              <p className="text-sm text-blue-200">Built-in lessons</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{libraryEntries.length}</p>
             </div>
             <div className="rounded-2xl border border-orange-400/20 bg-orange-500/10 p-4">
               <p className="text-sm text-orange-200">Learning items</p>
@@ -40,13 +39,13 @@ export default async function HomePage() {
         </div>
 
         <div className="card">
-          <span className="badge">Architecture</span>
+          <span className="badge">How it works</span>
           <ul className="mt-4 space-y-3 text-sm text-slate-300">
-            <li>• Next.js App Router + TypeScript + Tailwind</li>
-            <li>• Static library seed data in <code>src/lib/data/library.ts</code></li>
-            <li>• Dynamic profile, learning items, flashcards, and review logs in Postgres</li>
-            <li>• Neon/Vercel Postgres via <code>DATABASE_URL</code> with in-memory fallback for local inspection</li>
-            <li>• Vitest unit coverage and <code>bin/test-app.sh</code> for local validation</li>
+            <li>• Guitar knowledge ships with the app.</li>
+            <li>• Your learning list turns knowledge into personal practice items.</li>
+            <li>• Flashcards are created automatically when you add something.</li>
+            <li>• Reviews stay focused on what you actually learned.</li>
+            <li>• The fretboard view stays front and center on detail pages.</li>
           </ul>
         </div>
       </section>

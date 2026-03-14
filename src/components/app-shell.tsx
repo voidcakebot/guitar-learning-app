@@ -15,7 +15,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <header className="mb-8 flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur md:flex-row md:items-center md:justify-between">
           <div>
             <Link href="/" className="text-2xl font-semibold tracking-tight text-white">Fretboard Pilot</Link>
-            <p className="mt-1 text-sm text-slate-300">Static guitar knowledge library + Postgres-backed learning state.</p>
+            <p className="mt-1 text-sm text-slate-300">Your guided guitar library, practice path, and review loop.</p>
           </div>
           <nav className="flex flex-wrap gap-2 text-sm">
             {nav.map((item) => (

@@ -16,6 +16,14 @@ export type Pattern = {
   }>;
 };
 
+export type LearningFocus =
+  | 'chord-shape'
+  | 'notes'
+  | 'formula'
+  | 'fretboard'
+  | 'theory'
+  | 'alternative-shapes';
+
 export type LibraryEntry = {
   id: string;
   slug: string;
@@ -33,7 +41,19 @@ export type LibraryEntry = {
   relatedSlugs: string[];
   nextStepSlugs: string[];
   patterns?: Pattern[];
+  recommendedFocus?: LearningFocus[];
 };
+
+const beginnerFocus: LearningFocus[] = ['chord-shape', 'notes', 'formula', 'fretboard', 'theory'];
+
+export const focusOptions: Array<{ value: LearningFocus; label: string; description: string }> = [
+  { value: 'chord-shape', label: 'Chord shape', description: 'Remember the physical shape and fingering.' },
+  { value: 'notes', label: 'Notes', description: 'Know which notes are inside the chord or scale.' },
+  { value: 'formula', label: 'Formula', description: 'Learn the interval recipe that builds it.' },
+  { value: 'fretboard', label: 'Fretboard', description: 'Recognize roots and important positions on the neck.' },
+  { value: 'theory', label: 'Theory explanation', description: 'Understand what the shape means and why it works.' },
+  { value: 'alternative-shapes', label: 'Alternative shapes', description: 'Explore movable or alternate fingerings later.' },
+];
 
 export const libraryEntries: LibraryEntry[] = [
   {
@@ -49,6 +69,7 @@ export const libraryEntries: LibraryEntry[] = [
     notes: ['C', 'E', 'G'],
     relatedSlugs: ['c-major-scale', 'major-chord-construction'],
     nextStepSlugs: ['g-major', 'a-minor'],
+    recommendedFocus: beginnerFocus,
     patterns: [
       {
         id: 'pattern-c-major-open',
@@ -78,8 +99,9 @@ export const libraryEntries: LibraryEntry[] = [
     quality: 'major',
     formula: ['1', '3', '5'],
     notes: ['G', 'B', 'D'],
-    relatedSlugs: ['major-chord-construction', 'c-major'],
+    relatedSlugs: ['major-chord-construction', 'c-major', 'd-major'],
     nextStepSlugs: ['d-major', 'e-minor'],
+    recommendedFocus: beginnerFocus,
     patterns: [
       {
         id: 'pattern-g-major-open',
@@ -110,8 +132,9 @@ export const libraryEntries: LibraryEntry[] = [
     quality: 'minor',
     formula: ['1', 'b3', '5'],
     notes: ['A', 'C', 'E'],
-    relatedSlugs: ['natural-minor', 'c-major'],
+    relatedSlugs: ['natural-minor', 'c-major', 'minor-pentatonic-a'],
     nextStepSlugs: ['e-minor', 'minor-pentatonic-a'],
+    recommendedFocus: beginnerFocus,
     patterns: [
       {
         id: 'pattern-a-minor-open',
@@ -131,18 +154,83 @@ export const libraryEntries: LibraryEntry[] = [
     ]
   },
   {
+    id: 'chord-e-minor',
+    slug: 'e-minor',
+    type: 'chord',
+    title: 'E Minor',
+    summary: 'One of the easiest open chords and a perfect first minor sound.',
+    tags: ['open-chord', 'minor', 'beginner'],
+    rootNote: 'E',
+    quality: 'minor',
+    formula: ['1', 'b3', '5'],
+    notes: ['E', 'G', 'B'],
+    relatedSlugs: ['g-major', 'natural-minor'],
+    nextStepSlugs: ['d-major', 'a-minor'],
+    recommendedFocus: beginnerFocus,
+    patterns: [
+      {
+        id: 'pattern-e-minor-open',
+        name: 'Open Position',
+        patternType: 'chord',
+        baseFret: 1,
+        stringFrets: [0, 2, 2, 0, 0, 0],
+        fingers: [0, 2, 3, 0, 0, 0],
+        positions: [
+          { stringNumber: 6, fret: 0, note: 'E', interval: '1', isRoot: true },
+          { stringNumber: 5, fret: 2, note: 'B', interval: '5' },
+          { stringNumber: 4, fret: 2, note: 'E', interval: '1', isRoot: true },
+          { stringNumber: 3, fret: 0, note: 'G', interval: 'b3' },
+          { stringNumber: 2, fret: 0, note: 'B', interval: '5' },
+          { stringNumber: 1, fret: 0, note: 'E', interval: '1', isRoot: true }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'chord-d-major',
+    slug: 'd-major',
+    type: 'chord',
+    title: 'D Major',
+    summary: 'A bright upper-string chord that appears in countless beginner songs.',
+    tags: ['open-chord', 'major', 'beginner'],
+    rootNote: 'D',
+    quality: 'major',
+    formula: ['1', '3', '5'],
+    notes: ['D', 'F#', 'A'],
+    relatedSlugs: ['g-major', 'major-chord-construction'],
+    nextStepSlugs: ['c-major', 'g-major'],
+    recommendedFocus: beginnerFocus,
+    patterns: [
+      {
+        id: 'pattern-d-major-open',
+        name: 'Open Position',
+        patternType: 'chord',
+        baseFret: 1,
+        stringFrets: ['x', 'x', 0, 2, 3, 2],
+        fingers: [null, null, 0, 1, 3, 2],
+        positions: [
+          { stringNumber: 4, fret: 0, note: 'D', interval: '1', isRoot: true },
+          { stringNumber: 3, fret: 2, note: 'A', interval: '5' },
+          { stringNumber: 2, fret: 3, note: 'D', interval: '1', isRoot: true },
+          { stringNumber: 1, fret: 2, note: 'F#', interval: '3' }
+        ]
+      }
+    ]
+  },
+  {
     id: 'scale-c-major',
     slug: 'c-major-scale',
     type: 'scale',
     title: 'C Major Scale',
     summary: 'The no-sharps, no-flats major scale used to understand interval structure.',
-    tags: ['scale', 'major', 'theory'],
+    tags: ['scale', 'major', 'theory', 'beginner'],
     rootNote: 'C',
     scaleType: 'major',
     formula: ['1', '2', '3', '4', '5', '6', '7'],
     notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B'],
-    relatedSlugs: ['c-major', 'major-chord-construction'],
+    relatedSlugs: ['c-major', 'major-chord-construction', 'intervals-on-guitar'],
     nextStepSlugs: ['minor-pentatonic-a'],
+    recommendedFocus: ['notes', 'formula', 'fretboard', 'theory'],
     patterns: [
       {
         id: 'pattern-c-major-one-octave',
@@ -168,13 +256,14 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'scale',
     title: 'A Minor Pentatonic',
     summary: 'A high-value beginner scale for riffs, improvisation, and pattern awareness.',
-    tags: ['scale', 'minor', 'pentatonic'],
+    tags: ['scale', 'minor', 'pentatonic', 'beginner'],
     rootNote: 'A',
     scaleType: 'minor pentatonic',
     formula: ['1', 'b3', '4', '5', 'b7'],
     notes: ['A', 'C', 'D', 'E', 'G'],
-    relatedSlugs: ['a-minor', 'natural-minor'],
+    relatedSlugs: ['a-minor', 'natural-minor', 'caged-system-basics'],
     nextStepSlugs: ['c-major-scale'],
+    recommendedFocus: ['notes', 'formula', 'fretboard', 'theory'],
     patterns: [
       {
         id: 'pattern-a-minor-pentatonic-box-1',
@@ -199,14 +288,34 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Major Chord Construction',
     summary: 'How major triads are built from the 1st, 3rd, and 5th scale degrees.',
-    tags: ['theory', 'intervals', 'triads'],
+    tags: ['theory', 'intervals', 'triads', 'beginner'],
     topic: 'chord construction',
+    formula: ['1', '3', '5'],
     relatedSlugs: ['c-major', 'g-major', 'c-major-scale'],
-    nextStepSlugs: ['natural-minor'],
+    nextStepSlugs: ['minor-chord-construction'],
+    recommendedFocus: ['formula', 'theory', 'notes'],
     content: [
       'A major chord is built from the root, major third, and perfect fifth.',
       'On guitar, different voicings still express the same interval formula: 1-3-5.',
       'Knowing the formula makes it easier to recognize movable shapes later.'
+    ]
+  },
+  {
+    id: 'theory-minor-chord-construction',
+    slug: 'minor-chord-construction',
+    type: 'theory',
+    title: 'Minor Chord Construction',
+    summary: 'Minor triads keep the 5th but flatten the 3rd for a darker sound.',
+    tags: ['theory', 'intervals', 'triads', 'beginner'],
+    topic: 'chord construction',
+    formula: ['1', 'b3', '5'],
+    relatedSlugs: ['a-minor', 'e-minor', 'natural-minor'],
+    nextStepSlugs: ['natural-minor'],
+    recommendedFocus: ['formula', 'theory', 'notes'],
+    content: [
+      'A minor chord changes only one ingredient from major: the 3rd becomes a minor 3rd.',
+      'That one interval shift changes the emotional color dramatically.',
+      'Compare C major and A minor shapes to hear how interval choices shape mood.'
     ]
   },
   {
@@ -215,17 +324,56 @@ export const libraryEntries: LibraryEntry[] = [
     type: 'theory',
     title: 'Natural Minor Basics',
     summary: 'The minor sound comes from flattening the 3rd, 6th, and 7th degrees.',
-    tags: ['theory', 'minor', 'scale-construction'],
+    tags: ['theory', 'minor', 'scale-construction', 'beginner'],
     topic: 'scale construction',
-    relatedSlugs: ['a-minor', 'minor-pentatonic-a'],
-    nextStepSlugs: ['major-chord-construction'],
+    formula: ['1', '2', 'b3', '4', '5', 'b6', 'b7'],
+    relatedSlugs: ['a-minor', 'minor-pentatonic-a', 'minor-chord-construction'],
+    nextStepSlugs: ['intervals-on-guitar'],
+    recommendedFocus: ['formula', 'theory', 'notes'],
     content: [
       'The natural minor formula is 1-2-b3-4-5-b6-b7.',
       'Its darker color is especially obvious when you compare it directly with the major scale.',
       'Minor pentatonic is a simplified subset that is often easier to start practicing.'
     ]
+  },
+  {
+    id: 'theory-intervals-on-guitar',
+    slug: 'intervals-on-guitar',
+    type: 'theory',
+    title: 'Intervals on Guitar',
+    summary: 'Intervals are the distance language behind chords, scales, and fretboard logic.',
+    tags: ['theory', 'intervals', 'beginner'],
+    topic: 'intervals',
+    formula: ['1', 'b2', '2', 'b3', '3', '4', '#4', '5', 'b6', '6', 'b7', '7'],
+    relatedSlugs: ['major-chord-construction', 'natural-minor', 'c-major-scale'],
+    nextStepSlugs: ['caged-system-basics'],
+    recommendedFocus: ['formula', 'theory', 'fretboard'],
+    content: [
+      'Intervals name the distance from the root note to every other note.',
+      'Chord formulas and scale formulas are just interval recipes.',
+      'Once you see intervals on the fretboard, shapes become easier to move and reuse.'
+    ]
+  },
+  {
+    id: 'theory-caged-system-basics',
+    slug: 'caged-system-basics',
+    type: 'theory',
+    title: 'CAGED System Basics',
+    summary: 'CAGED connects open chord shapes to movable fretboard landmarks.',
+    tags: ['theory', 'caged', 'fretboard'],
+    topic: 'fretboard mapping',
+    relatedSlugs: ['c-major', 'g-major', 'a-minor', 'intervals-on-guitar'],
+    nextStepSlugs: ['minor-pentatonic-a'],
+    recommendedFocus: ['fretboard', 'theory', 'alternative-shapes'],
+    content: [
+      'The CAGED system uses five familiar open-shape families to navigate the neck.',
+      'It helps you connect chords, scales, and arpeggios instead of memorizing isolated boxes.',
+      'For V1, treat it as a map concept, not a full advanced curriculum yet.'
+    ]
   }
 ];
+
+export const beginnerEntrySlugs = ['c-major', 'g-major', 'a-minor', 'e-minor', 'd-major'];
 
 export const libraryBySlug = new Map(libraryEntries.map((entry) => [entry.slug, entry]));
 export const defaultEntrySlug = 'c-major';
@@ -236,6 +384,18 @@ export function getLibraryEntry(slug: string) {
 
 export function getRelatedEntries(entry: LibraryEntry) {
   return entry.relatedSlugs
+    .map((slug) => libraryBySlug.get(slug))
+    .filter((value): value is LibraryEntry => Boolean(value));
+}
+
+export function getNextSteps(entry: LibraryEntry) {
+  return entry.nextStepSlugs
+    .map((slug) => libraryBySlug.get(slug))
+    .filter((value): value is LibraryEntry => Boolean(value));
+}
+
+export function getBeginnerEntries() {
+  return beginnerEntrySlugs
     .map((slug) => libraryBySlug.get(slug))
     .filter((value): value is LibraryEntry => Boolean(value));
 }

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { AppShell } from '@/components/app-shell';
 import { Fretboard } from '@/components/fretboard';
-import { getLibraryEntry, getRelatedEntries } from '@/lib/data/library';
+import { focusOptions, getLibraryEntry, getNextSteps, getRelatedEntries } from '@/lib/data/library';
 import { getDashboardData } from '@/lib/db/store';
 
 export default async function LibraryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -15,10 +15,11 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
   const alreadyLearning = dashboard.learningItems.find((item) => item.entry_slug === entry.slug);
   const defaultPattern = entry.patterns?.[0];
   const related = getRelatedEntries(entry);
+  const nextSteps = getNextSteps(entry);
 
   return (
     <AppShell>
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="space-y-6">
           <div className="card">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -27,48 +28,78 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
                 <h1 className="mt-4 text-4xl font-semibold text-white">{entry.title}</h1>
                 <p className="mt-3 max-w-2xl text-slate-300">{entry.summary}</p>
               </div>
-              <div className="rounded-2xl border border-white/10 p-4 text-sm text-slate-300">
-                <p>Root: {entry.rootNote ?? '—'}</p>
+              <div className="min-w-64 rounded-2xl border border-white/10 p-4 text-sm text-slate-300">
+                <p>Root note: {entry.rootNote ?? '—'}</p>
                 <p className="mt-2">Formula: {entry.formula?.join(' · ') ?? 'Conceptual content'}</p>
+                <p className="mt-2">Primary pattern: {defaultPattern?.name ?? 'No pattern defined yet'}</p>
               </div>
             </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <span className="badge">Reference knowledge</span>
-                <p className="mt-2 text-sm text-slate-300">Library facts stay global and versioned in code.</p>
-              </div>
-              {alreadyLearning ? <span className="badge">Already in profile</span> : null}
-            </div>
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 p-4">
-                <p className="text-sm text-slate-400">Notes</p>
-                <p className="mt-2 text-white">{entry.notes?.join(', ') ?? 'N/A'}</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 p-4">
-                <p className="text-sm text-slate-400">Default pattern</p>
-                <p className="mt-2 text-white">{defaultPattern?.name ?? 'No pattern defined'}</p>
-              </div>
-            </div>
-            {entry.content?.length ? (
-              <div className="mt-4 space-y-3 rounded-2xl border border-white/10 p-4 text-sm text-slate-300">
-                {entry.content.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-              </div>
-            ) : null}
           </div>
 
           {defaultPattern?.positions?.length ? (
             <div className="card">
-              <span className="badge">Visualization</span>
-              <div className="mt-4">
-                <Fretboard positions={defaultPattern.positions.map((position) => ({
-                  stringNumber: position.stringNumber,
-                  fret: position.fret,
-                  label: position.interval,
-                  isRoot: position.isRoot,
-                }))} />
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <span className="badge">Fretboard centerpiece</span>
+                  <p className="mt-2 text-sm text-slate-300">See the important tones before you think about the supporting text.</p>
+                </div>
+                <span className="badge">{defaultPattern.name}</span>
+              </div>
+              <div className="mt-5">
+                <Fretboard
+                  frets={Math.max(5, ...defaultPattern.positions.map((position) => position.fret))}
+                  positions={defaultPattern.positions.map((position) => ({
+                    stringNumber: position.stringNumber,
+                    fret: position.fret,
+                    label: position.interval,
+                    isRoot: position.isRoot,
+                  }))}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="card">
+              <span className="badge">Key details</span>
+              <div className="mt-4 space-y-4 text-sm text-slate-300">
+                <div>
+                  <p className="text-slate-400">Notes</p>
+                  <p className="mt-1 text-white">{entry.notes?.join(', ') ?? 'Not specified yet'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400">Fingering</p>
+                  <p className="mt-1 text-white">{defaultPattern?.fingers?.map((finger) => finger ?? 'x').join(' • ') ?? 'No fingering stored yet'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-400">Tags</p>
+                  <p className="mt-1 text-white">{entry.tags.join(' • ')}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <span className="badge">Learn this as</span>
+              <div className="mt-4 space-y-3 text-sm text-slate-300">
+                {(entry.recommendedFocus ?? []).map((focus) => {
+                  const option = focusOptions.find((item) => item.value === focus);
+                  if (!option) return null;
+                  return (
+                    <div key={focus} className="rounded-2xl border border-white/10 p-3">
+                      <p className="font-medium text-white">{option.label}</p>
+                      <p className="text-slate-400">{option.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {entry.content?.length ? (
+            <div className="card">
+              <span className="badge">Theory explanation</span>
+              <div className="mt-4 space-y-3 text-sm text-slate-300">
+                {entry.content.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </div>
             </div>
           ) : null}
@@ -76,26 +107,36 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
 
         <div className="space-y-6">
           <div className="card">
-            <span className="badge">My version</span>
-            <p className="mt-3 text-sm text-slate-300">
-              For this MVP, auth is intentionally minimal and everything goes into a default learning profile.
-            </p>
-            <form action="/api/learning-items" method="post" className="mt-4 space-y-3">
+            <span className="badge">Add to my learning</span>
+            <p className="mt-3 text-sm text-slate-300">What did you actually learn?</p>
+            {alreadyLearning ? (
+              <p className="mt-3 rounded-2xl border border-orange-400/30 bg-orange-500/10 px-4 py-3 text-sm text-orange-100">
+                Already added to your learning list.
+              </p>
+            ) : null}
+            <form action="/api/learning-items" method="post" className="mt-4 space-y-4">
               <input type="hidden" name="entrySlug" value={entry.slug} />
               <input type="hidden" name="profileId" value={dashboard.profile.id} />
-              <label className="block text-sm text-slate-300">
-                Visibility mode
-                <select name="visibilityMode" defaultValue="standard" className="mt-2">
-                  <option value="minimal">Minimal</option>
-                  <option value="standard">Standard</option>
-                  <option value="expanded">Expanded</option>
-                </select>
-              </label>
+              <input type="hidden" name="visibilityMode" value="guided" />
+              <div className="grid gap-3">
+                {focusOptions.map((option) => {
+                  const checked = (entry.recommendedFocus ?? []).includes(option.value);
+                  return (
+                    <label key={option.value} className="flex items-start gap-3 rounded-2xl border border-white/10 p-3 text-sm text-slate-300">
+                      <input type="checkbox" name="focusAreas" value={option.value} defaultChecked={checked} className="mt-1 h-4 w-4 rounded border-white/20 bg-slate-950" />
+                      <span>
+                        <span className="block font-medium text-white">{option.label}</span>
+                        <span className="text-slate-400">{option.description}</span>
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
               <label className="block text-sm text-slate-300">
                 Personal note
-                <textarea name="note" rows={4} placeholder="e.g. Feels clean when I anchor the ring finger first" className="mt-2" />
+                <textarea name="note" rows={4} placeholder="e.g. Cleaner when I lead with finger 2 and keep the wrist relaxed" className="mt-2" />
               </label>
-              <button className="button-primary w-full" type="submit">Add to learning profile</button>
+              <button className="button-primary w-full" type="submit">Add to learning</button>
             </form>
           </div>
 
@@ -103,6 +144,18 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
             <span className="badge">Related content</span>
             <div className="mt-4 space-y-3">
               {related.map((item) => (
+                <Link key={item.slug} href={`/library/${item.slug}`} className="block rounded-2xl border border-white/10 p-4 transition hover:border-orange-400/60">
+                  <p className="font-medium text-white">{item.title}</p>
+                  <p className="mt-1 text-sm text-slate-400">{item.summary}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="card">
+            <span className="badge">Next step</span>
+            <div className="mt-4 space-y-3">
+              {nextSteps.map((item) => (
                 <Link key={item.slug} href={`/library/${item.slug}`} className="block rounded-2xl border border-white/10 p-4 transition hover:border-orange-400/60">
                   <p className="font-medium text-white">{item.title}</p>
                   <p className="mt-1 text-sm text-slate-400">{item.summary}</p>
