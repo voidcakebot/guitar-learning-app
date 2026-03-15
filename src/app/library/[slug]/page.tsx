@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { AppShell } from '@/components/app-shell';
-import { ChordDiagram } from '@/components/chord-diagram';
-import { Fretboard } from '@/components/fretboard';
+import { NeckView } from '@/components/neck-view';
 import { getLibraryEntry } from '@/lib/library';
 import { buildFretboardPositions } from '@/lib/fretboard-map';
 
@@ -58,9 +57,9 @@ export default async function LibraryDetailPage({
         </section>
 
         {entry.type === 'chord' && entry.patterns?.[0] ? (
-          <ChordDiagram pattern={entry.patterns[0]} />
+          <NeckView mode="chord" pattern={entry.patterns[0]} />
         ) : fretboardPositions.length ? (
-          <Fretboard frets={12} positions={fretboardPositions} mutedStrings={mutedStrings} />
+          <NeckView mode="scale" positions={fretboardPositions} frets={12} mutedStrings={mutedStrings} />
         ) : null}
       </div>
     </AppShell>
