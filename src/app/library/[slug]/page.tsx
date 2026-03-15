@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { AppShell, type FrontendVariant } from '@/components/app-shell';
+import { AppShell } from '@/components/app-shell';
 import { Fretboard } from '@/components/fretboard';
 import { getLibraryEntry } from '@/lib/library';
 import { buildFretboardPositions } from '@/lib/fretboard-map';
@@ -18,18 +18,12 @@ const openChordMuteMap: Record<string, number[]> = {
   'g-dominant-7': [5],
 };
 
-const validVariants: FrontendVariant[] = ['v1', 'v2', 'v3', 'v4', 'v5'];
-
 export default async function LibraryDetailPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ variant?: string }>;
 }) {
   const { slug } = await params;
-  const query = (await searchParams) ?? {};
-  const variant = validVariants.includes(query.variant as FrontendVariant) ? (query.variant as FrontendVariant) : 'v1';
   const entry = getLibraryEntry(slug);
   if (!entry) notFound();
 
@@ -86,13 +80,9 @@ export default async function LibraryDetailPage({
           <h2 className="mt-4 display-font text-3xl text-white sm:text-4xl">Positions on the neck</h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Switch between positions to inspect where this {entry.type} appears across the neck.</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-300">
-          <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-500">Coverage</p>
-          <p className="mt-2 font-semibold text-white">12 frets</p>
-        </div>
       </div>
       <div className="mt-5">
-        <Fretboard frets={12} positions={fretboardPositions} mutedStrings={mutedStrings} variant={variant} />
+        <Fretboard frets={12} positions={fretboardPositions} mutedStrings={mutedStrings} />
       </div>
     </section>
   ) : null;
@@ -118,37 +108,12 @@ export default async function LibraryDetailPage({
   );
 
   return (
-    <AppShell variant={variant}>
-      {variant === 'v2' ? (
-        <div className="space-y-4">
-          {infoPrimary}
-          {infoCards}
-          {neck}
-        </div>
-      ) : variant === 'v3' ? (
-        <div className="space-y-8">
-          {infoPrimary}
-          {neck}
-          {infoCards}
-        </div>
-      ) : variant === 'v4' ? (
-        <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
-          <div className="space-y-6">{infoPrimary}{infoCards}</div>
-          <div>{neck}</div>
-        </div>
-      ) : variant === 'v5' ? (
-        <div className="space-y-5">
-          {neck}
-          {infoPrimary}
-          {infoCards}
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {infoPrimary}
-          {neck}
-          {infoCards}
-        </div>
-      )}
+    <AppShell>
+      <div className="space-y-8">
+        {infoPrimary}
+        {neck}
+        {infoCards}
+      </div>
     </AppShell>
   );
 }
