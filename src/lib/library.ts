@@ -50,21 +50,47 @@ const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A
 const standardTuning = ['E', 'A', 'D', 'G', 'B', 'E'];
 const roots = [...chromaticNotes];
 
-const chordBlueprints = [
-  { symbol: '', label: 'major', tags: ['triad', 'major'] },
-  { symbol: 'm', label: 'minor', tags: ['triad', 'minor'] },
-  { symbol: '7', label: 'dominant 7', tags: ['seventh', 'dominant'] },
-  { symbol: 'maj7', label: 'major 7', tags: ['seventh', 'major'] },
-  { symbol: 'm7', label: 'minor 7', tags: ['seventh', 'minor'] },
-] as const;
+const supportedChordSymbols = ['', 'm', '7', 'maj7', 'm7'] as const;
+const supportedScaleNames = ['major', 'minor', 'major pentatonic', 'minor pentatonic', 'blues'] as const;
 
-const scaleBlueprints = [
-  { name: 'major', tags: ['scale', 'major'] },
-  { name: 'minor', tags: ['scale', 'minor'] },
-  { name: 'major pentatonic', tags: ['scale', 'pentatonic', 'major'] },
-  { name: 'minor pentatonic', tags: ['scale', 'pentatonic', 'minor'] },
-  { name: 'blues', tags: ['scale', 'blues'] },
-] as const;
+function prettyChordLabel(symbol: string, fallbackName: string) {
+  if (symbol === '') return 'major';
+  if (symbol === 'm') return 'minor';
+  if (symbol === '7') return 'dominant 7';
+  if (symbol === 'maj7') return 'major 7';
+  if (symbol === 'm7') return 'minor 7';
+  return fallbackName || symbol;
+}
+
+function chordTagsFromLabel(label: string) {
+  const lower = label.toLowerCase();
+  return [
+    lower.includes('7') ? 'seventh' : 'triad',
+    lower.includes('minor') ? 'minor' : lower.includes('dominant') ? 'dominant' : 'major',
+  ] as const;
+}
+
+const chordBlueprints = supportedChordSymbols.map((symbol) => {
+  const chordType = ChordType.get(symbol || 'major');
+  const label = prettyChordLabel(symbol, chordType.name || 'major');
+  return {
+    symbol,
+    label,
+    tags: chordTagsFromLabel(label),
+  };
+});
+
+const scaleBlueprints = supportedScaleNames.map((name) => {
+  const scaleType = ScaleType.get(name);
+  return {
+    name,
+    label: scaleType.name || name,
+    tags: [
+      'scale',
+      name.includes('pentatonic') ? 'pentatonic' : name.includes('blues') ? 'blues' : name.includes('minor') ? 'minor' : 'major',
+    ] as const,
+  };
+});
 
 const defaultChordFocus: LearningFocus[] = ['chord-shape', 'notes', 'formula', 'theory'];
 const defaultScaleFocus: LearningFocus[] = ['notes', 'formula', 'fretboard', 'theory'];
