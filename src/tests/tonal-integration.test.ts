@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Chord, Note, Scale } from 'tonal';
 
-import { buildChordNotes } from '@/lib/music/chord-generator';
-import { buildScaleNotes } from '@/lib/music/scale-generator';
 import { formatFormula, getLibraryEntry, normalizeTonalInterval } from '@/lib/data/library';
 
 describe('Tonal integration', () => {
@@ -20,14 +18,20 @@ describe('Tonal integration', () => {
     expect(formatFormula(Scale.get('E blues').intervals)).toEqual(['1', 'b3', '4', 'b5', '5', 'b7']);
   });
 
-  it('keeps local chord generation aligned with Note.transpose semantics', () => {
+  it('matches chord library entries to Tonal note transposition results', () => {
+    const entry = getLibraryEntry('a-minor');
+    if (!entry) throw new Error('missing a-minor entry');
+
     const expected = ['1P', '3m', '5P'].map((interval) => Note.transpose('A', interval));
-    expect(buildChordNotes('A', 'minor')).toEqual(expected);
+    expect(entry.notes).toEqual(expected);
   });
 
-  it('keeps local scale generation aligned with Tonal note transposition', () => {
-    const expected = ['1P', '2M', '3M', '5P', '6M'].map((interval) => Note.transpose('C', interval));
-    expect(buildScaleNotes('C', 'majorPentatonic')).toEqual(expected);
+  it('matches scale library entries to Tonal note transposition results', () => {
+    const entry = getLibraryEntry('c-major-scale');
+    if (!entry) throw new Error('missing c-major-scale entry');
+
+    const expected = ['1P', '2M', '3M', '4P', '5P', '6M', '7M'].map((interval) => Note.transpose('C', interval));
+    expect(entry.notes).toEqual(expected);
   });
 
   it('stores chord library entries with notes and formulas consistent with Tonal', () => {
