@@ -114,9 +114,10 @@ export function formatFormula(intervals: string[]) {
 function makeChordEntry(root: string, symbol: string, label: string, tags: readonly string[]): LibraryEntry {
   const chord = Chord.get(`${root}${symbol}`);
   const formula = formatFormula(chord.intervals);
+  const slug = slugify(`${root}-${label}`);
   return {
-    id: `chord-${slugify(`${root}-${label}`)}`,
-    slug: slugify(`${root}-${label}`),
+    id: `chord-${slug}`,
+    slug,
     type: 'chord',
     title: chord.name || `${root} ${label}`,
     summary: `${root} ${label} built from Tonal.js chord data for notes, intervals, and naming.`,
@@ -127,6 +128,7 @@ function makeChordEntry(root: string, symbol: string, label: string, tags: reado
     notes: chord.notes,
     relatedSlugs: [],
     nextStepSlugs: [],
+    patterns: openChordPatterns[slug] ? [openChordPatterns[slug]] : undefined,
     recommendedFocus: defaultChordFocus,
     content: [
       `Generated from Tonal.js chord data for ${chord.symbol || `${root}${symbol}`}.`,
@@ -141,6 +143,81 @@ function scaleSlug(root: string, scaleName: string) {
   return slugify(`${root}-${scaleName}-scale`);
 }
 
+const openChordPatterns: Record<string, Pattern> = {
+  'c-major': {
+    id: 'open-c-major',
+    name: 'Open C major',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: ['x', 3, 2, 0, 1, 0],
+    fingers: [null, 3, 2, null, 1, null],
+  },
+  'a-major': {
+    id: 'open-a-major',
+    name: 'Open A major',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: ['x', 0, 2, 2, 2, 0],
+    fingers: [null, null, 1, 2, 3, null],
+  },
+  'a-minor': {
+    id: 'open-a-minor',
+    name: 'Open A minor',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: ['x', 0, 2, 2, 1, 0],
+    fingers: [null, null, 2, 3, 1, null],
+  },
+  'e-major': {
+    id: 'open-e-major',
+    name: 'Open E major',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: [0, 2, 2, 1, 0, 0],
+    fingers: [null, 2, 3, 1, null, null],
+  },
+  'e-minor': {
+    id: 'open-e-minor',
+    name: 'Open E minor',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: [0, 2, 2, 0, 0, 0],
+    fingers: [null, 2, 3, null, null, null],
+  },
+  'd-major': {
+    id: 'open-d-major',
+    name: 'Open D major',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: ['x', 'x', 0, 2, 3, 2],
+    fingers: [null, null, null, 1, 3, 2],
+  },
+  'd-minor': {
+    id: 'open-d-minor',
+    name: 'Open D minor',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: ['x', 'x', 0, 2, 3, 1],
+    fingers: [null, null, null, 2, 3, 1],
+  },
+  'g-major': {
+    id: 'open-g-major',
+    name: 'Open G major',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: [3, 2, 0, 0, 0, 3],
+    fingers: [2, 1, null, null, null, 3],
+  },
+  'g-dominant-7': {
+    id: 'open-g7',
+    name: 'Open G7',
+    patternType: 'chord',
+    baseFret: 1,
+    stringFrets: [3, 2, 0, 0, 0, 1],
+    fingers: [3, 2, null, null, null, 1],
+  },
+};
+
 function makeScaleEntry(root: string, scaleName: string, tags: readonly string[]): LibraryEntry {
   const scale = Scale.get(`${root} ${scaleName}`);
   const formula = formatFormula(scale.intervals);
@@ -149,7 +226,7 @@ function makeScaleEntry(root: string, scaleName: string, tags: readonly string[]
     id: `scale-${slug}`,
     slug,
     type: 'scale',
-    title: scale.name || `${root} ${scaleName}`,
+    title: `${scale.name || `${root} ${scaleName}`} scale`,
     summary: `${root} ${scaleName} generated from Tonal.js scale data for notes and interval structure.`,
     tags: ['tonal', ...tags],
     rootNote: root,

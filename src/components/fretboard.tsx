@@ -54,7 +54,7 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
               onClick={() => setActiveWindowKey(window.key)}
               className={isActive ? 'button-primary' : 'rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.06]'}
             >
-              {window.key === 'open' ? 'Open' : window.label}
+              {window.key === 'open' ? 'Open' : `Window ${window.label}`}
             </button>
           );
         })}
