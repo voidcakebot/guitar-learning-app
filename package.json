@@ -13,12 +13,10 @@
     "app:test": "./bin/test-app.sh"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.1",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "tonal": "^6.4.3",
-    "zod": "^4.1.11"
+    "tonal": "^6.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

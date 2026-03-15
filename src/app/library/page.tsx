@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { AppShell } from '@/components/app-shell';
-import { libraryEntries } from '@/lib/data/library';
+import { libraryEntries } from '@/lib/library';
 
 const tabs = [
   { key: 'chords', label: 'Chords' },

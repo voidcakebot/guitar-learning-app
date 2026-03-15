@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { filterPositionsForWindow, getNeckPositionWindow } from '@/lib/guitar/neck-view';
+import { filterPositionsForWindow, getNeckPositionWindow } from '@/lib/neck-view';
 
 describe('neck-view helpers', () => {
   it('filters positions by the selected neck window', () => {

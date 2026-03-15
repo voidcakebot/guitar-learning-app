@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Chord, Note, Scale } from 'tonal';
 
-import { formatFormula, getLibraryEntry, normalizeTonalInterval } from '@/lib/data/library';
+import { formatFormula, getLibraryEntry, normalizeTonalInterval } from '@/lib/library';
 
 describe('Tonal integration', () => {
   it('normalizes Tonal interval notation into guitar-friendly display labels', () => {

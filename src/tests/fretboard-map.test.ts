@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildFretboardPositions } from '@/lib/guitar/fretboard-map';
+import { buildFretboardPositions } from '@/lib/fretboard-map';
 
 describe('fretboard map', () => {
   it('simplifies enharmonic labels for fretboard display', () => {

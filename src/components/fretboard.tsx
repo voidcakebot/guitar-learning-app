@@ -8,7 +8,7 @@ import {
   neckPositionWindows,
   type NeckPositionWindowKey,
   type NeckViewPosition,
-} from '@/lib/guitar/neck-view';
+} from '@/lib/neck-view';
 
 const strings = [6, 5, 4, 3, 2, 1] as const;
 const tuningLabels: Record<number, string> = {

@@ -2,8 +2,8 @@ import { notFound } from 'next/navigation';
 
 import { AppShell } from '@/components/app-shell';
 import { Fretboard } from '@/components/fretboard';
-import { getLibraryEntry } from '@/lib/data/library';
-import { buildFretboardPositions } from '@/lib/guitar/fretboard-map';
+import { getLibraryEntry } from '@/lib/library';
+import { buildFretboardPositions } from '@/lib/fretboard-map';
 
 const openChordMuteMap: Record<string, number[]> = {
   'c-major': [6],
