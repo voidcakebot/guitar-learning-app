@@ -20,18 +20,6 @@ const tuningLabels: Record<number, string> = {
   1: 'E',
 };
 
-function stringStrokeWidth(stringNumber: number) {
-  if (stringNumber >= 5) return 3.6;
-  if (stringNumber >= 3) return 2.6;
-  return 1.8;
-}
-
-function stringOpacity(stringNumber: number) {
-  if (stringNumber >= 5) return 0.95;
-  if (stringNumber >= 3) return 0.82;
-  return 0.72;
-}
-
 export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positions: NeckViewPosition[]; frets?: number; mutedStrings?: number[] }) {
   const [activeWindowKey, setActiveWindowKey] = useState<NeckPositionWindowKey>('open');
   const activeWindow = getNeckPositionWindow(activeWindowKey);
@@ -58,6 +46,8 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
   const bottom = height - 74;
   const stringGap = (bottom - top) / (strings.length - 1);
   const fretGap = (right - left) / Math.max(displayedFrets.length, 1);
+  const laneLeft = left + (isOpenWindow ? 0 : fretGap);
+  const laneRight = right;
 
   return (
     <div className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(8,13,20,0.96),rgba(5,9,15,0.98))] shadow-2xl shadow-slate-950/50">
@@ -183,18 +173,15 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
                       <line x1={left - 30} y1={y + 9} x2={left - 12} y2={y - 9} stroke="#fda4af" strokeWidth={2.6} strokeLinecap="round" />
                     </g>
                   ) : null}
-                  {!mutedStrings.includes(stringNumber) && visiblePositions.some((position) => position.stringNumber === stringNumber && position.fret === 0) ? (
-                    <circle cx={left - 16} cy={y} r={6.5} fill="#22c55e" stroke="rgba(255,255,255,0.3)" strokeWidth={1.5} />
-                  ) : null}
                   <line
-                    x1={left}
+                    x1={laneLeft}
                     y1={y}
-                    x2={right}
+                    x2={laneRight}
                     y2={y}
                     stroke="#f8fafc"
-                    strokeWidth={stringStrokeWidth(stringNumber)}
+                    strokeWidth={3.2}
                     strokeLinecap="round"
-                    opacity={stringOpacity(stringNumber)}
+                    opacity={0.95}
                   />
                 </g>
               );
@@ -235,10 +222,6 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-4 w-4 rounded-full bg-sky-400 ring-4 ring-sky-400/20" />
                 <span>Chord or scale tone</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-4 w-4 rounded-full bg-green-500" />
-                <span>Open string in this window</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-lg leading-none text-rose-300">✕</span>

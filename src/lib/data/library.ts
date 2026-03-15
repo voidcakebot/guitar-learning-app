@@ -87,7 +87,25 @@ function slugify(value: string) {
 }
 
 function formatFormula(intervals: string[]) {
-  return intervals.map((interval) => interval.replace('P', '').replace('M', '').replace('m', 'b'));
+  return intervals.map((interval) => {
+    if (interval.startsWith('P') || interval.startsWith('M')) {
+      return interval.slice(1);
+    }
+
+    if (interval.startsWith('m')) {
+      return `b${interval.slice(1)}`;
+    }
+
+    if (interval.startsWith('A')) {
+      return `#${interval.slice(1)}`;
+    }
+
+    if (interval.startsWith('d')) {
+      return `b${interval.slice(1)}`;
+    }
+
+    return interval;
+  });
 }
 
 function makeChordEntry(root: string, symbol: string, label: string, tags: readonly string[]): LibraryEntry {
