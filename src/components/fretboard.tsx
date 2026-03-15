@@ -44,6 +44,16 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
 
   return (
     <div className="card rounded-[1rem] p-4 sm:p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-white">Scale map</p>
+          <p className="mt-1 text-sm text-slate-400">Note windows on the neck</p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white">
+          {isOpenWindow ? 'Open' : `Window ${activeWindow.label}`}
+        </div>
+      </div>
+
       <div className="mb-4 flex flex-wrap gap-2">
         {neckPositionWindows.map((window) => {
           const isActive = window.key === activeWindow.key;
@@ -76,8 +86,8 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
             </linearGradient>
           </defs>
 
-          <rect x={left - 14} y={top - 24} width={right - left + 28} height={bottom - top + 48} rx={16} fill="url(#neck-board)" stroke="#334155" strokeWidth="2" />
-          <rect x={left - 18} y={top - 30} width={12} height={bottom - top + 60} rx={4} fill="#f8fafc" opacity={isOpenWindow ? 1 : 0.14} />
+          <rect x={left - 14} y={top - 24} width={right - left + 28} height={bottom - top + 48} rx={14} fill="#111827" stroke="#334155" strokeWidth="2" />
+          {isOpenWindow ? <rect x={left - 4} y={top - 8} width={right - left + 8} height={6} rx={3} fill="#f8fafc" /> : null}
 
           {displayedFrets.map((fret, index) => {
             const x = left + (isOpenWindow ? index : index + 1) * fretGap;
