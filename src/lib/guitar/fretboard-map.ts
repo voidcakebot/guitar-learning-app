@@ -42,7 +42,7 @@ export function buildFretboardPositions({
       positions.push({
         stringNumber: strings[index],
         fret,
-        label: match.note,
+        label: Note.simplify(match.note) || match.note,
         isRoot: rootChroma !== null && fretChroma === rootChroma,
       });
     }

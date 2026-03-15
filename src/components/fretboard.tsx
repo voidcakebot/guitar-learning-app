@@ -41,6 +41,7 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
   const width = 860;
   const height = 356;
   const left = 86;
+  const openNoteX = left - 42;
   const right = width - 26;
   const top = 82;
   const bottom = height - 74;
@@ -194,7 +195,7 @@ export function Fretboard({ positions, frets = 12, mutedStrings = [] }: { positi
               const y = top + stringIndex * stringGap;
               const x = isOpenWindow
                 ? position.fret === 0
-                  ? left - 16
+                  ? openNoteX
                   : left + position.fret * fretGap - fretGap * 0.5
                 : left + (position.fret - firstVisibleFret) * fretGap + fretGap * 0.5;
 
