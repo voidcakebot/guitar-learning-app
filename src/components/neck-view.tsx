@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { SVGuitarChord } from 'svguitar';
 
 import type { Pattern } from '@/lib/library';
 import {
@@ -11,16 +12,7 @@ import {
   type NeckViewPosition,
 } from '@/lib/neck-view';
 
-const stringLabels = ['E', 'A', 'D', 'G', 'B', 'E'];
-const strings = [6, 5, 4, 3, 2, 1] as const;
-const tuningLabels: Record<number, string> = {
-  6: 'E',
-  5: 'A',
-  4: 'D',
-  3: 'G',
-  2: 'B',
-  1: 'E',
-};
+const tuning = ['E', 'A', 'D', 'G', 'B', 'E'];
 
 type NeckViewProps =
   | {
@@ -38,6 +30,16 @@ type NeckViewProps =
       mutedStrings?: number[];
     };
 
+type SvgFingerLabel = string | { text?: string; color?: string; textColor?: string; className?: string; shape?: 'circle' | 'triangle' | 'square' };
+type SvgFinger = [number, number | 'x', SvgFingerLabel?];
+
+type SvgChordData = {
+  title?: string;
+  position?: number;
+  fingers: SvgFinger[];
+  barres: Array<{ fromString: number; toString: number; fret: number; text?: string }>;
+};
+
 export function NeckView(props: NeckViewProps) {
   if (props.mode === 'chord') {
     return <ChordMode title={props.title} badge={props.badge} pattern={props.pattern} />;
@@ -46,7 +48,7 @@ export function NeckView(props: NeckViewProps) {
   return <ScaleMode title={props.title} badge={props.badge} positions={props.positions} frets={props.frets} mutedStrings={props.mutedStrings} />;
 }
 
-function Shell({ title, subtitle, badge, children, right }: { title: string; subtitle?: string; badge: string; children: React.ReactNode; right?: React.ReactNode }) {
+function Shell({ title, subtitle, badge, controls, children }: { title: string; subtitle?: string; badge: string; controls?: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="card rounded-[1rem] p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -56,192 +58,169 @@ function Shell({ title, subtitle, badge, children, right }: { title: string; sub
         </div>
         <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white">{badge}</div>
       </div>
-      {right}
-      <div className="rounded-[1rem] border border-white/8 bg-[#080d12] p-3">{children}</div>
+      {controls ? <div className="mb-4 flex flex-wrap gap-2">{controls}</div> : null}
+      <div className="rounded-[1rem] border border-white/8 bg-[#080d12] p-3">
+        {children}
+      </div>
     </div>
   );
 }
 
-function ChordMode({ pattern, title = 'Chord shape', badge = 'Open' }: { pattern: Pattern; title?: string; badge?: string }) {
-  const width = 300;
-  const height = 360;
-  const left = 54;
-  const right = width - 34;
-  const top = 62;
-  const bottom = height - 34;
-  const stringGap = (right - left) / 5;
-  const fretGap = (bottom - top) / 4;
+function SvguitarRenderer({ chord, frets = 4 }: { chord: SvgChordData; frets?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = '';
+
+    new SVGuitarChord(ref.current)
+      .configure({
+        strings: 6,
+        frets,
+        tuning,
+        position: chord.position ?? 1,
+        title: chord.title,
+        titleBottomMargin: 6,
+        backgroundColor: 'none',
+        color: '#e5e7eb',
+        stringColor: '#e5e7eb',
+        fretColor: '#cbd5e1',
+        fretLabelColor: '#94a3b8',
+        tuningsColor: '#e5e7eb',
+        titleColor: '#f8fafc',
+        fingerColor: '#e2e8f0',
+        fingerTextColor: '#0f172a',
+        fingerStrokeColor: '#ffffff',
+        fingerStrokeWidth: 0.6,
+        barreChordStrokeColor: '#ffffff',
+        barreChordStrokeWidth: 0.6,
+        fretMarkerColor: 'rgba(255,255,255,0.18)',
+        strokeWidth: 1.8,
+        fontFamily: 'IBM Plex Sans, sans-serif',
+        titleFontSize: 34,
+        tuningsFontSize: 22,
+        fretLabelFontSize: 20,
+        fingerTextSize: 18,
+        noPosition: false,
+      })
+      .chord(chord as never)
+      .draw();
+  }, [chord, frets]);
+
+  return <div ref={ref} className="svguitar-host overflow-x-auto" />;
+}
+
+function patternToSvgChord(pattern: Pattern): { chord: SvgChordData; frets: number } {
   const numericFrets = pattern.stringFrets.filter((fret): fret is number => typeof fret === 'number' && fret > 0);
   const minFret = numericFrets.length ? Math.min(...numericFrets) : 1;
-  const baseFret = minFret > 1 ? minFret : 1;
-  const displayedFrets = Array.from({ length: 5 }, (_, index) => baseFret + index);
+  const maxFret = numericFrets.length ? Math.max(...numericFrets) : 1;
+  const position = minFret > 1 ? minFret : 1;
+  const frets = Math.max(4, maxFret - position + 2);
 
+  const fingers: SvgFinger[] = pattern.stringFrets.map((fret, index) => {
+    const string = index + 1;
+    if (fret === 'x') return [string, 'x'];
+    if (fret === 0) return [string, 0];
+    const fingerText = pattern.fingers?.[index] ? String(pattern.fingers[index]) : undefined;
+    return fingerText ? [string, fret, fingerText] : [string, fret];
+  });
+
+  return {
+    chord: {
+      title: pattern.name,
+      position,
+      fingers,
+      barres: [],
+    },
+    frets,
+  };
+}
+
+function positionsToSvgChord(args: { title?: string; positions: NeckViewPosition[]; windowStart: number; windowEnd: number; mutedStrings?: number[] }): { chord: SvgChordData; frets: number } {
+  const { title, positions, windowStart, windowEnd, mutedStrings = [] } = args;
+  const isOpen = windowStart === 0;
+  const position = isOpen ? 1 : windowStart;
+  const frets = Math.max(4, windowEnd - position + 1);
+
+  const fingers: SvgFinger[] = [];
+  const mutedSet = new Set(mutedStrings);
+
+  for (const mutedString of mutedSet) {
+    fingers.push([7 - mutedString, 'x']);
+  }
+
+  for (const positionItem of positions) {
+    if (isOpen && positionItem.fret === 0) {
+      fingers.push([7 - positionItem.stringNumber, 0]);
+      continue;
+    }
+
+    const text = positionItem.label ?? '';
+    fingers.push([
+      7 - positionItem.stringNumber,
+      positionItem.fret,
+      {
+        text,
+        color: positionItem.isRoot ? '#ffffff' : '#cbd5e1',
+        textColor: '#0f172a',
+        shape: 'circle',
+      },
+    ]);
+  }
+
+  return {
+    chord: {
+      title,
+      position,
+      fingers,
+      barres: [],
+    },
+    frets,
+  };
+}
+
+function ChordMode({ pattern, title = 'Neck view', badge = 'Chord' }: { pattern: Pattern; title?: string; badge?: string }) {
+  const { chord, frets } = useMemo(() => patternToSvgChord(pattern), [pattern]);
   return (
-    <Shell title={title} subtitle={pattern.name} badge={baseFret === 1 ? badge : `Fret ${baseFret}`}>
-      <svg viewBox={`0 0 ${width} ${height}`} className="mx-auto w-full max-w-[300px]">
-        <rect x={left - 14} y={top - 14} width={right - left + 28} height={bottom - top + 20} rx={14} fill="#111827" stroke="#334155" strokeWidth="2" />
-        {baseFret === 1 ? <rect x={left - 4} y={top - 8} width={right - left + 8} height={6} rx={3} fill="#f8fafc" /> : null}
-
-        {stringLabels.map((label, index) => {
-          const x = left + index * stringGap;
-          return (
-            <g key={label + index}>
-              <line x1={x} y1={top} x2={x} y2={bottom} stroke="#e5e7eb" strokeWidth={2.4} opacity={0.9} />
-              <text x={x} y={28} textAnchor="middle" fontSize={12} fill="#e5e7eb" fontWeight={700}>{label}</text>
-            </g>
-          );
-        })}
-
-        {displayedFrets.map((fret, index) => {
-          const y = top + index * fretGap;
-          return (
-            <g key={fret}>
-              <line x1={left} y1={y} x2={right} y2={y} stroke="#cbd5e1" strokeWidth={2} opacity={0.8} />
-              <text x={width - 10} y={y + 5} textAnchor="end" fontSize={11} fill="#94a3b8">{fret}</text>
-            </g>
-          );
-        })}
-
-        {pattern.stringFrets.map((fret, index) => {
-          const x = left + index * stringGap;
-          const finger = pattern.fingers?.[index];
-          if (fret === 'x') {
-            return (
-              <g key={`muted-${index}`}>
-                <line x1={x - 7} y1={40} x2={x + 7} y2={54} stroke="#fda4af" strokeWidth={2.4} strokeLinecap="round" />
-                <line x1={x - 7} y1={54} x2={x + 7} y2={40} stroke="#fda4af" strokeWidth={2.4} strokeLinecap="round" />
-              </g>
-            );
-          }
-          if (fret === 0) {
-            return <circle key={`open-${index}`} cx={x} cy={47} r={7} fill="none" stroke="#e5e7eb" strokeWidth={2} />;
-          }
-          const y = baseFret === 1 ? top + (fret - 1) * fretGap + fretGap * 0.5 : top + (fret - baseFret) * fretGap + fretGap * 0.5;
-          return (
-            <g key={`fret-${index}`}>
-              <circle cx={x} cy={y} r={11} fill="#ffffff" />
-              {finger ? <text x={x} y={y + 4} textAnchor="middle" fontSize={11} fontWeight={800} fill="#0f172a">{finger}</text> : null}
-            </g>
-          );
-        })}
-      </svg>
+    <Shell title={title} subtitle={pattern.name} badge={badge}>
+      <SvguitarRenderer chord={chord} frets={frets} />
     </Shell>
   );
 }
 
-function ScaleMode({ positions, frets = 12, mutedStrings = [], title = 'Scale map', badge }: { positions: NeckViewPosition[]; frets?: number; mutedStrings?: number[]; title?: string; badge?: string }) {
+function ScaleMode({ positions, frets = 12, mutedStrings = [], title = 'Neck view', badge }: { positions: NeckViewPosition[]; frets?: number; mutedStrings?: number[]; title?: string; badge?: string }) {
   const [activeWindowKey, setActiveWindowKey] = useState<NeckPositionWindowKey>('open');
   const activeWindow = getNeckPositionWindow(activeWindowKey);
   const visiblePositions = useMemo(() => filterPositionsForWindow(positions, activeWindow), [activeWindow, positions]);
 
-  const fretStart = activeWindow.start;
-  const fretEnd = Math.min(activeWindow.end, frets);
-  const displayedFrets = Array.from({ length: fretEnd - fretStart + 1 }, (_, index) => fretStart + index);
-  const firstVisibleFret = displayedFrets[0] ?? 0;
-  const isOpenWindow = firstVisibleFret === 0;
-
-  const width = 920;
-  const height = 300;
-  const left = 96;
-  const right = width - 28;
-  const top = 76;
-  const bottom = height - 58;
-  const stringGap = (bottom - top) / (strings.length - 1);
-  const fretGap = (right - left) / Math.max(displayedFrets.length, 1);
-  const laneLeft = left + (isOpenWindow ? 0 : fretGap);
-  const laneRight = right;
+  const chordData = useMemo(() => positionsToSvgChord({
+    title: undefined,
+    positions: visiblePositions,
+    windowStart: activeWindow.start,
+    windowEnd: Math.min(activeWindow.end, frets),
+    mutedStrings,
+  }), [visiblePositions, activeWindow.start, activeWindow.end, frets, mutedStrings]);
 
   return (
     <Shell
       title={title}
-      subtitle="Note windows on the neck"
-      badge={badge ?? (isOpenWindow ? 'Open' : `Window ${activeWindow.label}`)}
-      right={
-        <div className="mb-4 flex flex-wrap gap-2">
-          {neckPositionWindows.map((window) => {
-            const isActive = window.key === activeWindow.key;
-            return (
-              <button
-                key={window.key}
-                type="button"
-                onClick={() => setActiveWindowKey(window.key)}
-                className={isActive ? 'button-primary' : 'rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.06]'}
-              >
-                {window.key === 'open' ? 'Open' : `Window ${window.label}`}
-              </button>
-            );
-          })}
-        </div>
-      }
+      subtitle="Scale window"
+      badge={badge ?? (activeWindow.key === 'open' ? 'Open' : `Window ${activeWindow.label}`)}
+      controls={neckPositionWindows.map((window) => {
+        const isActive = window.key === activeWindow.key;
+        return (
+          <button
+            key={window.key}
+            type="button"
+            onClick={() => setActiveWindowKey(window.key)}
+            className={isActive ? 'button-primary' : 'rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.06]'}
+          >
+            {window.key === 'open' ? 'Open' : `Window ${window.label}`}
+          </button>
+        );
+      })}
     >
-      <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[760px] w-full sm:min-w-[920px]">
-        <defs>
-          <linearGradient id="fret-metal-unified" x1="0" x2="1">
-            <stop offset="0%" stopColor="#cbd5e1" />
-            <stop offset="45%" stopColor="#f8fafc" />
-            <stop offset="100%" stopColor="#94a3b8" />
-          </linearGradient>
-        </defs>
-
-        <rect x={left - 14} y={top - 24} width={right - left + 28} height={bottom - top + 48} rx={14} fill="#111827" stroke="#334155" strokeWidth="2" />
-        {isOpenWindow ? <rect x={left - 4} y={top - 8} width={right - left + 8} height={6} rx={3} fill="#f8fafc" /> : null}
-
-        {displayedFrets.map((fret, index) => {
-          const x = left + (isOpenWindow ? index : index + 1) * fretGap;
-          const labelX = left + index * fretGap + fretGap * 0.5;
-          return (
-            <g key={`fret-${fret}`}>
-              <line x1={x} y1={top - 14} x2={x} y2={bottom + 14} stroke="url(#fret-metal-unified)" strokeWidth={3.2} />
-              <text x={labelX} y={height - 12} textAnchor="middle" fontSize={11} fill="#cbd5e1" fontWeight={600}>{fret === 0 ? 'Open' : fret}</text>
-            </g>
-          );
-        })}
-
-        {[3, 5, 7, 9].filter((fret) => displayedFrets.includes(fret)).map((fret) => {
-          const idx = displayedFrets.indexOf(fret);
-          const x = left + idx * fretGap + fretGap * 0.5;
-          return <circle key={`marker-${fret}`} cx={x} cy={(top + bottom) / 2} r={4.5} fill="rgba(255,255,255,0.22)" />;
-        })}
-
-        {displayedFrets.includes(12) ? (
-          <>
-            <circle cx={right - fretGap * 0.5} cy={(top + bottom) / 2 - 18} r={4.5} fill="rgba(255,255,255,0.22)" />
-            <circle cx={right - fretGap * 0.5} cy={(top + bottom) / 2 + 18} r={4.5} fill="rgba(255,255,255,0.22)" />
-          </>
-        ) : null}
-
-        {strings.map((stringNumber, index) => {
-          const y = top + index * stringGap;
-          return (
-            <g key={`string-${stringNumber}`}>
-              <text x={30} y={y + 4.5} textAnchor="middle" fontSize={12} fill="#e5e7eb" fontWeight={700}>{stringNumber}</text>
-              <text x={56} y={y + 4.5} textAnchor="middle" fontSize={11} fill="#e5e7eb">{tuningLabels[stringNumber]}</text>
-              {mutedStrings.includes(stringNumber) ? (
-                <g>
-                  <line x1={left - 34} y1={y - 9} x2={left - 14} y2={y + 9} stroke="#fda4af" strokeWidth={2.4} strokeLinecap="round" />
-                  <line x1={left - 34} y1={y + 9} x2={left - 14} y2={y - 9} stroke="#fda4af" strokeWidth={2.4} strokeLinecap="round" />
-                </g>
-              ) : null}
-              <line x1={laneLeft} y1={y} x2={laneRight} y2={y} stroke="#e5e7eb" strokeWidth={2.6} strokeLinecap="round" opacity={0.82} />
-            </g>
-          );
-        })}
-
-        {visiblePositions.map((position) => {
-          if (isOpenWindow && position.fret === 0) return null;
-          const stringIndex = strings.findIndex((value) => value === position.stringNumber);
-          if (stringIndex < 0) return null;
-          const y = top + stringIndex * stringGap;
-          const x = isOpenWindow ? left + position.fret * fretGap - fretGap * 0.5 : left + (position.fret - firstVisibleFret) * fretGap + fretGap * 0.5;
-          const size = position.isRoot ? 25 : 21;
-          return (
-            <g key={`${position.stringNumber}-${position.fret}-${position.label}`}>
-              <rect x={x - size / 2} y={y - size / 2} width={size} height={size} rx={5} fill={position.isRoot ? '#ffffff' : '#cbd5e1'} stroke="rgba(255,255,255,0.16)" strokeWidth={1.5} />
-              <text x={x} y={y + 4.2} textAnchor="middle" fontSize={position.label && position.label.length > 1 ? 9.4 : 10.6} fontWeight={800} fill="#0f172a">{position.label}</text>
-            </g>
-          );
-        })}
-      </svg>
+      <SvguitarRenderer chord={chordData.chord} frets={chordData.frets} />
     </Shell>
   );
 }
