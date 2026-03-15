@@ -39,80 +39,78 @@ export default async function LibraryDetailPage({
     .filter((value): value is number => value !== null)
     ?? (entry.type === 'chord' ? openChordMuteMap[entry.slug] ?? [] : []);
 
-  const infoPrimary = (
-    <div className="card overflow-hidden p-4 sm:p-6 lg:p-7">
-      <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-        <div className="max-w-3xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="badge">{entry.type}</span>
-            <span className="rounded-full border border-white/10 px-3 py-1 text-[0.68rem] uppercase tracking-[0.24em] text-slate-300">Root {entry.rootNote ?? '—'}</span>
-          </div>
-          <h1 className="mt-5 display-font text-4xl text-white sm:text-5xl lg:text-6xl">{entry.title}</h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">{entry.summary}</p>
-        </div>
-
-        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:min-w-[26rem]">
-          <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-300">
-            <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-400">Notes</p>
-            <p className="mt-2 text-lg font-semibold text-white">{entry.notes?.join(' · ') ?? '—'}</p>
-          </div>
-          {entry.type === 'chord' ? (
-            <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-300">
-              <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-400">Intervals</p>
-              <p className="mt-2 text-lg font-semibold text-white">{entry.formula?.join(' · ') ?? '—'}</p>
-            </div>
-          ) : (
-            <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-300">
-              <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-400">Scale info</p>
-              <p className="mt-2 text-lg font-semibold text-white">Root {entry.rootNote ?? '—'} · {entry.scaleType ?? 'Scale'}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  const neck = fretboardPositions.length ? (
-    <section className="card overflow-hidden p-4 sm:p-6">
-      <div className="flex flex-col gap-3 border-b border-white/8 pb-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <span className="badge">Neck view</span>
-          <h2 className="mt-4 display-font text-3xl text-white sm:text-4xl">Positions on the neck</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Switch between positions to inspect where this {entry.type} appears across the neck.</p>
-        </div>
-      </div>
-      <div className="mt-5">
-        <Fretboard frets={12} positions={fretboardPositions} mutedStrings={mutedStrings} />
-      </div>
-    </section>
-  ) : null;
-
-  const infoCards = (
-    <section className="grid gap-4 lg:grid-cols-2">
-      <div className="card p-5 sm:p-6">
-        <span className="badge">{entry.type === 'chord' ? 'Chord notes' : 'Scale notes'}</span>
-        <p className="mt-4 text-base leading-8 text-white">{entry.notes?.join(', ') ?? 'No notes available.'}</p>
-      </div>
-      {entry.type === 'chord' ? (
-        <div className="card p-5 sm:p-6">
-          <span className="badge">Intervals</span>
-          <p className="mt-4 text-base leading-8 text-white">{entry.formula?.join(', ') ?? 'No intervals available.'}</p>
-        </div>
-      ) : (
-        <div className="card p-5 sm:p-6">
-          <span className="badge">Scale info</span>
-          <p className="mt-4 text-base leading-8 text-white">Root {entry.rootNote ?? '—'} · {entry.scaleType ?? 'Scale'}</p>
-        </div>
-      )}
-    </section>
-  );
-
   return (
     <AppShell>
       <div className="space-y-8">
-        {infoPrimary}
-        {neck}
-        {infoCards}
+        <section className="card overflow-hidden p-5 sm:p-7">
+          <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+            <div className="max-w-3xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="badge">{entry.type}</span>
+                <span className="rounded-full border border-white/10 px-3 py-1 text-[0.68rem] uppercase tracking-[0.24em] text-slate-300">
+                  Root {entry.rootNote ?? '—'}
+                </span>
+              </div>
+              <h1 className="mt-5 display-font text-4xl text-white sm:text-5xl lg:text-6xl">{entry.title}</h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">{entry.summary}</p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+              <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300">
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-500">Notes</p>
+                <p className="mt-3 text-lg font-semibold text-white">{entry.notes?.join(' · ') ?? '—'}</p>
+              </div>
+              <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300">
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-500">{entry.type === 'chord' ? 'Intervals' : 'Scale info'}</p>
+                <p className="mt-3 text-lg font-semibold text-white">
+                  {entry.type === 'chord'
+                    ? entry.formula?.join(' · ') ?? '—'
+                    : `Root ${entry.rootNote ?? '—'} · ${entry.scaleType ?? 'Scale'}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {fretboardPositions.length ? (
+          <section className="card overflow-hidden p-5 sm:p-7">
+            <div className="flex flex-col gap-4 border-b border-white/8 pb-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <span className="badge">Neck view</span>
+                <h2 className="mt-4 display-font text-3xl text-white sm:text-4xl">Shape positions</h2>
+                <p className="mt-3 text-sm leading-7 text-slate-300">
+                  Move through focused neck positions to see this {entry.type} as clear, compact shapes instead of one overloaded full-neck map.
+                </p>
+              </div>
+              <div className="rounded-[1.2rem] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-slate-300">
+                <p className="text-[0.68rem] uppercase tracking-[0.24em] text-slate-500">Range</p>
+                <p className="mt-2 font-semibold text-white">Open position + 12 frets</p>
+              </div>
+            </div>
+            <div className="mt-6">
+              <Fretboard frets={12} positions={fretboardPositions} mutedStrings={mutedStrings} />
+            </div>
+          </section>
+        ) : null}
+
+        <section className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="card p-5 sm:p-6">
+            <span className="badge">{entry.type === 'chord' ? 'Playable note set' : 'Scale tones'}</span>
+            <p className="mt-5 text-base leading-8 text-white">{entry.notes?.join(', ') ?? 'No notes available.'}</p>
+          </div>
+
+          {entry.type === 'chord' ? (
+            <div className="card p-5 sm:p-6">
+              <span className="badge">Interval structure</span>
+              <p className="mt-5 text-base leading-8 text-white">{entry.formula?.join(', ') ?? 'No intervals available.'}</p>
+            </div>
+          ) : (
+            <div className="card p-5 sm:p-6">
+              <span className="badge">Reference</span>
+              <p className="mt-5 text-base leading-8 text-white">This scale is shown as a neck-position reference so you can study note grouping and root placement directly on the fretboard.</p>
+            </div>
+          )}
+        </section>
       </div>
     </AppShell>
   );

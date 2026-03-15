@@ -4,30 +4,30 @@
   color-scheme: dark;
   --font-display: "Cormorant Garamond", serif;
   --font-body: "IBM Plex Sans", sans-serif;
-  --bg-0: #120d0f;
-  --bg-1: #1a1419;
-  --bg-2: #271d1f;
-  --panel: rgba(20, 17, 20, 0.8);
-  --line: rgba(255, 214, 170, 0.14);
-  --text: #f8f2ea;
-  --muted: #c6b7a6;
-  --accent: #f59e0b;
-  --accent-soft: #fde68a;
-  --accent-deep: #7c2d12;
+  --bg-0: #06080c;
+  --bg-1: #0b1016;
+  --bg-2: #121922;
+  --panel: rgba(12, 16, 24, 0.84);
+  --panel-strong: rgba(15, 20, 30, 0.94);
+  --line: rgba(148, 163, 184, 0.14);
+  --line-strong: rgba(226, 232, 240, 0.12);
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #e2e8f0;
+  --accent-strong: #ffffff;
 }
 
 html {
   background:
-    radial-gradient(circle at top left, rgba(245, 158, 11, 0.14), transparent 24%),
-    radial-gradient(circle at 85% 10%, rgba(251, 146, 60, 0.12), transparent 20%),
-    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 46%, #0a0809 100%);
+    radial-gradient(circle at top left, rgba(148, 163, 184, 0.08), transparent 24%),
+    radial-gradient(circle at 85% 12%, rgba(59, 130, 246, 0.06), transparent 20%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 50%, #04060a 100%);
 }
 
 body {
   min-height: 100vh;
   font-family: var(--font-body);
-  background:
-    linear-gradient(180deg, rgba(16, 12, 14, 0.92) 0%, rgba(10, 8, 9, 0.99) 100%);
+  background: linear-gradient(180deg, rgba(8, 11, 17, 0.9) 0%, rgba(4, 6, 10, 0.98) 100%);
   color: var(--text);
   letter-spacing: 0.01em;
 }
@@ -37,12 +37,12 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.26;
+  opacity: 0.16;
   background-image:
-    linear-gradient(rgba(255, 236, 214, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 236, 214, 0.02) 1px, transparent 1px);
-  background-size: 140px 140px, 140px 140px;
-  mask-image: radial-gradient(circle at center, black 40%, transparent 92%);
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px;
+  mask-image: radial-gradient(circle at center, black 45%, transparent 94%);
 }
 
 body::after {
@@ -51,9 +51,9 @@ body::after {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.08), transparent 16%),
-    radial-gradient(circle at 72% 32%, rgba(124, 45, 18, 0.08), transparent 20%),
-    radial-gradient(circle at 60% 85%, rgba(251, 191, 36, 0.05), transparent 18%);
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.035), transparent 18%),
+    radial-gradient(circle at 74% 30%, rgba(59, 130, 246, 0.04), transparent 20%),
+    radial-gradient(circle at 60% 82%, rgba(148, 163, 184, 0.035), transparent 20%);
 }
 
 h1,
@@ -65,15 +65,15 @@ h3,
 }
 
 .card {
-  @apply rounded-[1.75rem] border p-6 shadow-2xl backdrop-blur-xl;
+  @apply rounded-[1.5rem] border p-6 shadow-2xl backdrop-blur-xl;
   position: relative;
   border-color: var(--line);
   background:
-    linear-gradient(180deg, rgba(33, 24, 25, 0.82) 0%, rgba(17, 13, 14, 0.92) 100%),
+    linear-gradient(180deg, rgba(17, 24, 33, 0.82) 0%, rgba(10, 15, 23, 0.92) 100%),
     var(--panel);
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 239, 220, 0.05);
+    0 24px 70px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .card::before {
@@ -82,50 +82,50 @@ h3,
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), transparent 34%, transparent 70%, rgba(255, 237, 213, 0.03));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent 34%, transparent 72%, rgba(148, 163, 184, 0.03));
 }
 
 .badge {
   @apply inline-flex items-center rounded-full px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.34em];
-  border: 1px solid rgba(253, 230, 138, 0.2);
-  color: var(--accent-soft);
-  background: rgba(120, 53, 15, 0.22);
+  border: 1px solid rgba(226, 232, 240, 0.14);
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .button-primary {
   @apply inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition;
-  color: #1a1008;
-  background: linear-gradient(135deg, #fde68a 0%, #f59e0b 55%, #fb923c 100%);
-  box-shadow: 0 14px 30px rgba(245, 158, 11, 0.24);
+  color: #0f172a;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 55%, #cbd5e1 100%);
+  box-shadow: 0 14px 30px rgba(148, 163, 184, 0.16);
 }
 
 .button-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 38px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 18px 38px rgba(148, 163, 184, 0.22);
 }
 
 .button-secondary {
   @apply inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition;
-  border: 1px solid rgba(255, 237, 213, 0.14);
-  background: rgba(255, 248, 240, 0.04);
-  color: #f8ede2;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: #e2e8f0;
 }
 
 .button-secondary:hover {
-  border-color: rgba(253, 230, 138, 0.3);
-  background: rgba(255, 248, 240, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 input,
 textarea,
 select {
   @apply w-full rounded-2xl px-4 py-3 text-sm outline-none ring-0;
-  border: 1px solid rgba(186, 230, 253, 0.14);
-  background: rgba(7, 17, 28, 0.82);
+  border: 1px solid rgba(226, 232, 240, 0.1);
+  background: rgba(7, 12, 18, 0.9);
   color: var(--text);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #61839a;
+  color: #64748b;
 }
