@@ -16,7 +16,7 @@ const bodyFont = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: 'Fretboard Pilot',
-  description: 'A pragmatic MVP for guided guitar learning with a static library and dynamic learning state.',
+  description: 'A focused guitar library for chords and scales with neck positions, note sets, and interval reference.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

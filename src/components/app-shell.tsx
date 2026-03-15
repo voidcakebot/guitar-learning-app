@@ -9,15 +9,15 @@ const nav = [
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen text-[color:var(--text)]">
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 py-4 sm:px-6 lg:px-8">
         <header className="mb-6 overflow-hidden rounded-[1.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,14,18,0.94),rgba(7,10,16,0.94))] shadow-2xl shadow-black/25 backdrop-blur-xl">
-          <div className="border-b border-white/8 px-4 py-3 sm:px-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="px-4 py-5 sm:px-6 sm:py-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <p className="text-[0.65rem] uppercase tracking-[0.34em] text-[color:var(--muted)]">Guitar knowledge atlas</p>
+                <p className="text-[0.65rem] uppercase tracking-[0.34em] text-[color:var(--muted)]">Guitar library</p>
                 <Link href="/library" className="mt-2 block display-font text-4xl leading-none text-white sm:text-5xl">Fretboard Pilot</Link>
-                <p className="mt-3 max-w-xl text-sm leading-6 text-[color:var(--muted)]">
-                  A redesigned chord and scale browser built around a clearer, more tactile fretboard experience.
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--muted)]">
+                  A focused chord and scale reference with neck positions, note sets, and interval information.
                 </p>
               </div>
               <nav className="flex flex-wrap gap-2 text-sm">
