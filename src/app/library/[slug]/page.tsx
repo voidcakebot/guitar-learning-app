@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { AppShell } from '@/components/app-shell';
+import { AppShell, type FrontendVariant } from '@/components/app-shell';
 import { Fretboard } from '@/components/fretboard';
 import { getLibraryEntry } from '@/lib/library';
 import { buildFretboardPositions } from '@/lib/fretboard-map';
@@ -18,8 +18,18 @@ const openChordMuteMap: Record<string, number[]> = {
   'g-dominant-7': [5],
 };
 
-export default async function LibraryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+const validVariants: FrontendVariant[] = ['v1', 'v2', 'v3', 'v4', 'v5'];
+
+export default async function LibraryDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ variant?: string }>;
+}) {
   const { slug } = await params;
+  const query = (await searchParams) ?? {};
+  const variant = validVariants.includes(query.variant as FrontendVariant) ? (query.variant as FrontendVariant) : 'v1';
   const entry = getLibraryEntry(slug);
   if (!entry) notFound();
 
@@ -36,7 +46,7 @@ export default async function LibraryDetailPage({ params }: { params: Promise<{ 
     ?? (entry.type === 'chord' ? openChordMuteMap[entry.slug] ?? [] : []);
 
   return (
-    <AppShell>
+    <AppShell variant={variant}>
       <div className="space-y-6">
         <section className="card overflow-hidden p-4 sm:p-6 lg:p-7">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
