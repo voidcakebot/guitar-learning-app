@@ -86,26 +86,29 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, '');
 }
 
-function formatFormula(intervals: string[]) {
-  return intervals.map((interval) => {
-    if (interval.startsWith('P') || interval.startsWith('M')) {
-      return interval.slice(1);
-    }
+export function normalizeTonalInterval(interval: string) {
+  const match = interval.match(/^(\d+)([PMmAd])$/);
+  if (!match) return interval;
 
-    if (interval.startsWith('m')) {
-      return `b${interval.slice(1)}`;
-    }
+  const [, degree, quality] = match;
 
-    if (interval.startsWith('A')) {
-      return `#${interval.slice(1)}`;
-    }
+  if (quality === 'P' || quality === 'M') {
+    return degree;
+  }
 
-    if (interval.startsWith('d')) {
-      return `b${interval.slice(1)}`;
-    }
+  if (quality === 'm' || quality === 'd') {
+    return `b${degree}`;
+  }
 
-    return interval;
-  });
+  if (quality === 'A') {
+    return `#${degree}`;
+  }
+
+  return interval;
+}
+
+export function formatFormula(intervals: string[]) {
+  return intervals.map(normalizeTonalInterval);
 }
 
 function makeChordEntry(root: string, symbol: string, label: string, tags: readonly string[]): LibraryEntry {
