@@ -259,7 +259,7 @@ const styles = {
     background: 'linear-gradient(180deg, #8a8a8a 0%, #d9d9d9 45%, #666 100%)',
     boxShadow: '0 0 1px rgba(0,0,0,0.25)',
     transform: 'translateX(-50%)',
-    zIndex: 2,
+    zIndex: 3,
     pointerEvents: 'none',
   },
   noteCell: {
