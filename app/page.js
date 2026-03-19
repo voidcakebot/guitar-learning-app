@@ -242,7 +242,7 @@ const styles = {
     bottom: 0,
     height: '2px',
     background: '#8a8a8a',
-    zIndex: 3,
+    zIndex: 2,
     pointerEvents: 'none',
   },
   cellWrap: {
@@ -297,7 +297,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 0,
+    zIndex: 1,
   },
   doubleInlayTop: {
     position: 'absolute',
