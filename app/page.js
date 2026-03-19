@@ -112,12 +112,10 @@ export default function Home() {
                     {row.inlay && row.fret !== 0 && row.fret !== 12 ? <div style={styles.singleInlay} /> : null}
                     {row.doubleInlay ? (
                       <>
-                        <div style={styles.doubleInlayLeft} />
-                        <div style={styles.doubleInlayRight} />
+                        <div style={styles.doubleInlayTop} />
+                        <div style={styles.doubleInlayBottom} />
                       </>
                     ) : null}
-
-                    {row.fret !== 0 ? <div style={styles.fretMarkerLine} /> : null}
                   </div>
                 </div>
               ))}
@@ -237,15 +235,6 @@ const styles = {
     alignItems: 'center',
     borderBottom: '2px solid rgba(101, 69, 39, 0.5)',
   },
-  fretMarkerLine: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: '-2px',
-    height: '2px',
-    background: 'rgba(101, 69, 39, 0.65)',
-    pointerEvents: 'none',
-  },
   stringLinesOverlay: {
     position: 'absolute',
     inset: 0,
@@ -285,7 +274,7 @@ const styles = {
   },
   singleInlay: {
     position: 'absolute',
-    right: '14px',
+    left: '50%',
     top: '50%',
     width: '18px',
     height: '18px',
@@ -293,31 +282,34 @@ const styles = {
     background: '#fff7cf',
     border: '2px solid rgba(60, 45, 20, 0.35)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.25)',
-    transform: 'translateY(-50%)',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 0,
   },
-  doubleInlayLeft: {
+  doubleInlayTop: {
     position: 'absolute',
-    right: '14px',
-    top: '34%',
+    left: '34%',
+    top: '50%',
     width: '18px',
     height: '18px',
     borderRadius: '999px',
     background: '#fff7cf',
     border: '2px solid rgba(60, 45, 20, 0.35)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.25)',
-    transform: 'translateY(-50%)',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 0,
   },
-  doubleInlayRight: {
+  doubleInlayBottom: {
     position: 'absolute',
-    right: '14px',
-    top: '66%',
+    left: '66%',
+    top: '50%',
     width: '18px',
     height: '18px',
     borderRadius: '999px',
     background: '#fff7cf',
     border: '2px solid rgba(60, 45, 20, 0.35)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.25)',
-    transform: 'translateY(-50%)',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 0,
   },
   hello: {
     fontSize: '1.4rem',
