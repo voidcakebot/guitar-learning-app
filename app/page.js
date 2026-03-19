@@ -100,8 +100,8 @@ export default function Home() {
                           title={`${position.string} string, fret ${position.fret}, note ${position.note}`}
                           style={{
                             ...styles.noteCell,
-                            ...(active ? styles.noteCellActive : {}),
                             ...(row.fret === 0 ? styles.openNoteCell : {}),
+                            ...(active ? styles.noteCellActive : {}),
                           }}
                         >
                           <span style={styles.noteText}>{position.note}</span>
