@@ -242,7 +242,7 @@ const styles = {
     bottom: 0,
     height: '2px',
     background: '#8a8a8a',
-    zIndex: 2,
+    zIndex: 3,
     pointerEvents: 'none',
   },
   cellWrap: {
@@ -259,12 +259,12 @@ const styles = {
     background: 'linear-gradient(180deg, #8a8a8a 0%, #d9d9d9 45%, #666 100%)',
     boxShadow: '0 0 1px rgba(0,0,0,0.25)',
     transform: 'translateX(-50%)',
-    zIndex: 1,
+    zIndex: 2,
     pointerEvents: 'none',
   },
   noteCell: {
     position: 'relative',
-    zIndex: 3,
+    zIndex: 4,
     width: '38px',
     height: '38px',
     margin: '0 auto',
@@ -297,7 +297,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: -1,
+    zIndex: 0,
   },
   doubleInlayTop: {
     position: 'absolute',
