@@ -1,26 +1,9 @@
-# Fretboard Pilot
+# guitar-learning-app
 
-A focused guitar reference app built with Next.js + TypeScript.
+Minimal Next.js app in plain JavaScript.
 
-## What it includes
+## Scripts
 
-- chord library
-- scale library
-- neck view with position switching
-- chord notes and intervals
-- scale notes
-- Tonal.js-backed data generation
-- local validation CLI: `./bin/test-app.sh`
-
-## Local development
-
-```bash
-npm install
-npm run dev
-```
-
-## Test CLI
-
-```bash
-./bin/test-app.sh
-```
+- `npm run dev`
+- `npm run build`
+- `npm start`
