@@ -3,12 +3,12 @@
 import { useMemo, useState } from 'react';
 
 const STRINGS = [
-  { name: 'E', open: 'E' },
-  { name: 'A', open: 'A' },
-  { name: 'D', open: 'D' },
-  { name: 'G', open: 'G' },
-  { name: 'B', open: 'B' },
-  { name: 'e', open: 'E' },
+  { name: 'E', open: 'E', gauge: 3.6 },
+  { name: 'A', open: 'A', gauge: 3.1 },
+  { name: 'D', open: 'D', gauge: 2.6 },
+  { name: 'G', open: 'G', gauge: 2.1 },
+  { name: 'B', open: 'B', gauge: 1.6 },
+  { name: 'e', open: 'E', gauge: 1.2 },
 ];
 
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -85,6 +85,8 @@ export default function Home() {
                           style={{
                             ...styles.stringLine,
                             left: `calc(${index} * (100% / 6) + (100% / 12))`,
+                            width: `${string.gauge}px`,
+                            opacity: 0.95 - index * 0.08,
                           }}
                         />
                       ))}
@@ -244,8 +246,8 @@ const styles = {
     position: 'absolute',
     top: 0,
     bottom: 0,
-    width: '2px',
-    background: '#555',
+    background: 'linear-gradient(180deg, #8a8a8a 0%, #d9d9d9 45%, #666 100%)',
+    boxShadow: '0 0 1px rgba(0,0,0,0.35)',
     transform: 'translateX(-50%)',
   },
   noteCell: {
