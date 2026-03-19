@@ -232,7 +232,7 @@ const styles = {
     gridTemplateColumns: 'repeat(6, 1fr)',
     minHeight: '56px',
     alignItems: 'center',
-    borderBottom: '1px solid rgba(101, 69, 39, 0.28)',
+    borderBottom: '2px solid rgba(101, 69, 39, 0.34)',
   },
   cellWrap: {
     position: 'relative',
@@ -248,7 +248,7 @@ const styles = {
     background: 'linear-gradient(180deg, #8a8a8a 0%, #d9d9d9 45%, #666 100%)',
     boxShadow: '0 0 1px rgba(0,0,0,0.25)',
     transform: 'translateX(-50%)',
-    zIndex: 2,
+    zIndex: 1,
     pointerEvents: 'none',
   },
   noteCell: {
