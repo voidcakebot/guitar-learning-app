@@ -115,6 +115,8 @@ export default function Home() {
                         </div>
                       );
                     })}
+
+                    {row.fret !== 0 ? <div style={styles.fretWire} /> : null}
                   </div>
                 </div>
               ))}
@@ -232,7 +234,16 @@ const styles = {
     gridTemplateColumns: 'repeat(6, 1fr)',
     minHeight: '56px',
     alignItems: 'center',
-    borderBottom: '2px solid rgba(101, 69, 39, 0.34)',
+  },
+  fretWire: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '2px',
+    background: 'rgba(101, 69, 39, 0.34)',
+    zIndex: 2,
+    pointerEvents: 'none',
   },
   cellWrap: {
     position: 'relative',
