@@ -35,6 +35,7 @@ export default function Home() {
           string: string.name,
           note: getNote(string.open, fret),
           fret,
+          gauge: string.gauge,
         })),
       })),
     []
@@ -78,39 +79,6 @@ export default function Home() {
                   <div style={styles.fretNumber}>{row.fret}</div>
 
                   <div style={row.fret === 0 ? styles.nutRow : styles.fretRow}>
-                    <div style={styles.stringLinesOverlay}>
-                      {STRINGS.map((string, index) => (
-                        <div
-                          key={`${string.name}-${index}`}
-                          style={{
-                            ...styles.stringLine,
-                            left: `calc(${index} * (100% / 6) + (100% / 12))`,
-                            width: `${string.gauge}px`,
-                            opacity: 0.95 - index * 0.08,
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    {row.positions.map((position) => {
-                      const active = !!selected[position.id];
-                      return (
-                        <button
-                          key={position.id}
-                          type="button"
-                          onClick={() => toggleNote(position.id)}
-                          title={`${position.string} string, fret ${position.fret}, note ${position.note}`}
-                          style={{
-                            ...styles.noteCell,
-                            ...(row.fret === 0 ? styles.openNoteCell : {}),
-                            ...(active ? styles.noteCellActive : {}),
-                          }}
-                        >
-                          <span style={styles.noteText}>{position.note}</span>
-                        </button>
-                      );
-                    })}
-
                     {row.inlay && row.fret !== 0 && row.fret !== 12 ? <div style={styles.singleInlay} /> : null}
                     {row.doubleInlay ? (
                       <>
@@ -118,6 +86,33 @@ export default function Home() {
                         <div style={styles.doubleInlayBottom} />
                       </>
                     ) : null}
+
+                    {row.positions.map((position, index) => {
+                      const active = !!selected[position.id];
+                      return (
+                        <div key={position.id} style={styles.cellWrap}>
+                          <div
+                            style={{
+                              ...styles.stringLine,
+                              width: `${position.gauge}px`,
+                              opacity: 0.95 - index * 0.08,
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => toggleNote(position.id)}
+                            title={`${position.string} string, fret ${position.fret}, note ${position.note}`}
+                            style={{
+                              ...styles.noteCell,
+                              ...(row.fret === 0 ? styles.openNoteCell : {}),
+                              ...(active ? styles.noteCellActive : {}),
+                            }}
+                          >
+                            <span style={styles.noteText}>{position.note}</span>
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -237,18 +232,22 @@ const styles = {
     alignItems: 'center',
     borderBottom: '2px solid rgba(101, 69, 39, 0.5)',
   },
-  stringLinesOverlay: {
-    position: 'absolute',
-    inset: 0,
-    pointerEvents: 'none',
+  cellWrap: {
+    position: 'relative',
+    display: 'grid',
+    placeItems: 'center',
+    height: '100%',
   },
   stringLine: {
     position: 'absolute',
     top: 0,
     bottom: 0,
+    left: '50%',
     background: 'linear-gradient(180deg, #8a8a8a 0%, #d9d9d9 45%, #666 100%)',
     boxShadow: '0 0 1px rgba(0,0,0,0.35)',
     transform: 'translateX(-50%)',
+    zIndex: 2,
+    pointerEvents: 'none',
   },
   noteCell: {
     position: 'relative',
