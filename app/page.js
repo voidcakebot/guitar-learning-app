@@ -91,13 +91,15 @@ export default function Home() {
                       const active = !!selected[position.id];
                       return (
                         <div key={position.id} style={styles.cellWrap}>
-                          <div
-                            style={{
-                              ...styles.stringLine,
-                              width: `${position.gauge}px`,
-                              opacity: 0.95 - index * 0.08,
-                            }}
-                          />
+                          {row.fret !== 0 ? (
+                            <div
+                              style={{
+                                ...styles.stringLine,
+                                width: `${position.gauge}px`,
+                                opacity: 0.95 - index * 0.08,
+                              }}
+                            />
+                          ) : null}
                           <button
                             type="button"
                             onClick={() => toggleNote(position.id)}
@@ -199,7 +201,7 @@ const styles = {
     background: '#cf9a61',
     borderRadius: '18px',
     overflow: 'hidden',
-    boxShadow: 'inset 0 0 0 2px rgba(70,40,10,0.12)',
+    boxShadow: 'inset 0 0 0 2px rgba(70,40,10,0.08)',
   },
   fretRowWrap: {
     display: 'grid',
@@ -213,7 +215,7 @@ const styles = {
     fontSize: '0.92rem',
     color: '#51402c',
     background: '#ead4b7',
-    borderBottom: '2px solid rgba(90, 60, 30, 0.14)',
+    borderBottom: '1px solid rgba(90, 60, 30, 0.1)',
   },
   nutRow: {
     position: 'relative',
@@ -230,7 +232,7 @@ const styles = {
     gridTemplateColumns: 'repeat(6, 1fr)',
     minHeight: '56px',
     alignItems: 'center',
-    borderBottom: '2px solid rgba(101, 69, 39, 0.5)',
+    borderBottom: '1px solid rgba(101, 69, 39, 0.28)',
   },
   cellWrap: {
     position: 'relative',
@@ -244,14 +246,14 @@ const styles = {
     bottom: 0,
     left: '50%',
     background: 'linear-gradient(180deg, #8a8a8a 0%, #d9d9d9 45%, #666 100%)',
-    boxShadow: '0 0 1px rgba(0,0,0,0.35)',
+    boxShadow: '0 0 1px rgba(0,0,0,0.25)',
     transform: 'translateX(-50%)',
     zIndex: 2,
     pointerEvents: 'none',
   },
   noteCell: {
     position: 'relative',
-    zIndex: 1,
+    zIndex: 3,
     width: '38px',
     height: '38px',
     margin: '0 auto',
@@ -281,10 +283,10 @@ const styles = {
     height: '18px',
     borderRadius: '999px',
     background: '#fff7cf',
-    border: '2px solid rgba(60, 45, 20, 0.35)',
-    boxShadow: '0 0 0 2px rgba(255,255,255,0.25)',
+    border: '2px solid rgba(60, 45, 20, 0.22)',
+    boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 0,
+    zIndex: 1,
   },
   doubleInlayTop: {
     position: 'absolute',
@@ -294,10 +296,10 @@ const styles = {
     height: '18px',
     borderRadius: '999px',
     background: '#fff7cf',
-    border: '2px solid rgba(60, 45, 20, 0.35)',
-    boxShadow: '0 0 0 2px rgba(255,255,255,0.25)',
+    border: '2px solid rgba(60, 45, 20, 0.22)',
+    boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 0,
+    zIndex: 1,
   },
   doubleInlayBottom: {
     position: 'absolute',
@@ -307,10 +309,10 @@ const styles = {
     height: '18px',
     borderRadius: '999px',
     background: '#fff7cf',
-    border: '2px solid rgba(60, 45, 20, 0.35)',
-    boxShadow: '0 0 0 2px rgba(255,255,255,0.25)',
+    border: '2px solid rgba(60, 45, 20, 0.22)',
+    boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 0,
+    zIndex: 1,
   },
   hello: {
     fontSize: '1.4rem',
