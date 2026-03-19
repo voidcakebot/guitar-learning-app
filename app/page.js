@@ -2,14 +2,28 @@
 
 import { useMemo, useState } from 'react';
 
-const STRINGS = ['E', 'A', 'D', 'G', 'B', 'E'];
-const OPEN_NOTES = ['E', 'A', 'D', 'G', 'B', 'E'];
+const STRINGS = [
+  { name: 'e', open: 'E' },
+  { name: 'B', open: 'B' },
+  { name: 'G', open: 'G' },
+  { name: 'D', open: 'D' },
+  { name: 'A', open: 'A' },
+  { name: 'E', open: 'E' },
+];
+
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const FRET_COUNT = 22;
+const INLAYS = [3, 5, 7, 9, 12, 15, 17, 19, 21];
 
-function getNote(openNote, fret) {
-  const start = NOTES.indexOf(openNote);
-  return NOTES[(start + fret) % NOTES.length];
+function getNote(open, fret) {
+  const startIndex = NOTES.indexOf(open);
+  return NOTES[(startIndex + fret) % NOTES.length];
+}
+
+function getInlay(fret) {
+  if (fret === 12) return 'double';
+  if (INLAYS.includes(fret)) return 'single';
+  return null;
 }
 
 export default function Home() {
@@ -18,16 +32,14 @@ export default function Home() {
 
   const fretboard = useMemo(
     () =>
-      STRINGS.map((label, stringIndex) => ({
-        label,
-        notes: Array.from({ length: FRET_COUNT }, (_, fretIndex) => {
-          const fret = fretIndex + 1;
-          return {
-            fret,
-            note: getNote(OPEN_NOTES[stringIndex], fret),
-            id: `${stringIndex}-${fret}`,
-          };
-        }),
+      STRINGS.map((string, stringIndex) => ({
+        ...string,
+        stringIndex,
+        positions: Array.from({ length: FRET_COUNT + 1 }, (_, fret) => ({
+          fret,
+          note: getNote(string.open, fret),
+          id: `${stringIndex}-${fret}`,
+        })),
       })),
     []
   );
@@ -53,38 +65,65 @@ export default function Home() {
       </div>
 
       {mode === 'note' ? (
-        <section style={styles.boardWrap}>
-          <div style={styles.stringLabels}>
-            {STRINGS.map((string) => (
-              <div key={string} style={styles.stringLabel}>
-                {string}
+        <section style={styles.noteSection}>
+          <div style={styles.fretboardScroll}>
+            <div style={styles.fretboardWrap}>
+              <div style={styles.fretNumbers}>
+                {Array.from({ length: FRET_COUNT + 1 }, (_, fret) => (
+                  <div key={fret} style={styles.fretNumberCell}>
+                    {fret}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div style={styles.fretboardScroller}>
-            <div style={styles.fretboard}>
-              {fretboard.map((string) => (
-                <div key={string.label} style={styles.stringRow}>
-                  {string.notes.map((item) => {
-                    const active = !!selected[item.id];
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => toggleNote(item.id)}
-                        title={`String ${string.label}, fret ${item.fret}, note ${item.note}`}
-                        style={{
-                          ...styles.noteButton,
-                          ...(active ? styles.noteButtonActive : {}),
-                        }}
-                      >
-                        <span style={styles.noteInner}>{item.note}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+              <div style={styles.fretboard}>
+                {Array.from({ length: FRET_COUNT + 1 }, (_, fret) => {
+                  const inlay = getInlay(fret);
+                  return (
+                    <div
+                      key={`marker-${fret}`}
+                      style={{
+                        ...styles.inlayColumn,
+                        ...(fret === 0 ? styles.nutColumn : {}),
+                      }}
+                    >
+                      {inlay === 'single' ? <div style={styles.singleInlay} /> : null}
+                      {inlay === 'double' ? (
+                        <>
+                          <div style={styles.doubleInlayTop} />
+                          <div style={styles.doubleInlayBottom} />
+                        </>
+                      ) : null}
+                    </div>
+                  );
+                })}
+
+                {fretboard.map((string) => (
+                  <div key={string.stringIndex} style={styles.stringRow}>
+                    <div style={styles.stringLabel}>{string.name}</div>
+                    <div style={styles.stringLine} />
+
+                    {string.positions.map((position) => {
+                      const active = !!selected[position.id];
+                      return (
+                        <button
+                          key={position.id}
+                          type="button"
+                          onClick={() => toggleNote(position.id)}
+                          title={`${string.name} string, fret ${position.fret}, note ${position.note}`}
+                          style={{
+                            ...styles.noteCell,
+                            ...(position.fret === 0 ? styles.openCell : styles.fretCell),
+                            ...(active ? styles.noteCellActive : {}),
+                          }}
+                        >
+                          <span style={styles.noteText}>{position.note}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -95,6 +134,8 @@ export default function Home() {
   );
 }
 
+const cellWidth = '64px';
+
 const styles = {
   page: {
     minHeight: '100vh',
@@ -102,10 +143,10 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '24px',
-    background: '#f5f5f2',
-    color: '#111',
+    background: '#f5f3ed',
+    color: '#161616',
     fontFamily: 'Arial, sans-serif',
-    padding: '32px 16px 48px',
+    padding: '32px 12px 48px',
   },
   title: {
     fontSize: '3rem',
@@ -138,64 +179,120 @@ const styles = {
     color: '#fff',
     cursor: 'pointer',
   },
-  boardWrap: {
+  noteSection: {
     width: '100%',
-    maxWidth: '1000px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    alignItems: 'center',
+    maxWidth: '100%',
   },
-  stringLabels: {
-    width: '100%',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, minmax(44px, 1fr))',
-    gap: '10px',
-    maxWidth: '420px',
-  },
-  stringLabel: {
-    textAlign: 'center',
-    fontSize: '1.8rem',
-    letterSpacing: '0.08em',
-  },
-  fretboardScroller: {
+  fretboardScroll: {
     width: '100%',
     overflowX: 'auto',
     paddingBottom: '8px',
   },
+  fretboardWrap: {
+    minWidth: '1560px',
+    padding: '8px 12px 20px',
+  },
+  fretNumbers: {
+    display: 'grid',
+    gridTemplateColumns: `60px repeat(${FRET_COUNT + 1}, ${cellWidth})`,
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  fretNumberCell: {
+    textAlign: 'center',
+    fontSize: '0.95rem',
+    color: '#4a4a4a',
+  },
   fretboard: {
-    minWidth: '980px',
+    position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
-    padding: '12px 8px 20px',
-    borderTop: '6px solid #7b5a3c',
+    gap: '18px',
+    background: '#d5a873',
+    borderRadius: '18px',
+    padding: '18px 0',
+    boxShadow: 'inset 0 0 0 2px rgba(70,40,10,0.12)',
+  },
+  inlayColumn: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: cellWidth,
+    borderLeft: '2px solid rgba(110, 78, 47, 0.55)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nutColumn: {
+    borderLeft: '8px solid #f2ede1',
+  },
+  singleInlay: {
+    width: '14px',
+    height: '14px',
+    borderRadius: '999px',
+    background: 'rgba(255,255,255,0.72)',
+  },
+  doubleInlayTop: {
+    position: 'absolute',
+    top: '30%',
+    width: '14px',
+    height: '14px',
+    borderRadius: '999px',
+    background: 'rgba(255,255,255,0.72)',
+  },
+  doubleInlayBottom: {
+    position: 'absolute',
+    bottom: '30%',
+    width: '14px',
+    height: '14px',
+    borderRadius: '999px',
+    background: 'rgba(255,255,255,0.72)',
   },
   stringRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(22, 1fr)',
-    gap: '10px',
-    alignItems: 'center',
     position: 'relative',
+    display: 'grid',
+    gridTemplateColumns: `60px repeat(${FRET_COUNT + 1}, ${cellWidth})`,
+    alignItems: 'center',
+    minHeight: '56px',
+    zIndex: 1,
   },
-  noteButton: {
-    aspectRatio: '1 / 1',
-    width: '100%',
-    minWidth: '34px',
+  stringLabel: {
+    textAlign: 'center',
+    fontSize: '1rem',
+    fontWeight: 700,
+  },
+  stringLine: {
+    position: 'absolute',
+    left: '60px',
+    right: 0,
+    top: '50%',
+    height: '2px',
+    background: '#585858',
+    transform: 'translateY(-50%)',
+    zIndex: 0,
+  },
+  noteCell: {
+    width: '40px',
+    height: '40px',
+    margin: '0 auto',
     borderRadius: '999px',
-    border: '2px solid #111',
-    background: '#fff',
-    cursor: 'pointer',
+    border: '2px solid #151515',
+    background: '#fbfaf7',
     display: 'grid',
     placeItems: 'center',
-    padding: 0,
+    cursor: 'pointer',
+    zIndex: 2,
   },
-  noteButtonActive: {
-    background: '#111',
+  openCell: {
+    background: '#efe5d5',
+  },
+  fretCell: {},
+  noteCellActive: {
+    background: '#121212',
     color: '#fff',
   },
-  noteInner: {
-    fontSize: '0.78rem',
+  noteText: {
+    fontSize: '0.8rem',
     fontWeight: 700,
   },
   hello: {
