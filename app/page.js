@@ -241,7 +241,7 @@ const styles = {
     right: 0,
     bottom: 0,
     height: '2px',
-    background: 'rgba(101, 69, 39, 0.34)',
+    background: '#8a8a8a',
     zIndex: 2,
     pointerEvents: 'none',
   },
