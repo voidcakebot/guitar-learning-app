@@ -116,6 +116,8 @@ export default function Home() {
                         <div style={styles.doubleInlayRight} />
                       </>
                     ) : null}
+
+                    {row.fret !== 0 ? <div style={styles.fretMarkerLine} /> : null}
                   </div>
                 </div>
               ))}
@@ -234,6 +236,15 @@ const styles = {
     minHeight: '56px',
     alignItems: 'center',
     borderBottom: '2px solid rgba(101, 69, 39, 0.5)',
+  },
+  fretMarkerLine: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '-2px',
+    height: '2px',
+    background: 'rgba(101, 69, 39, 0.65)',
+    pointerEvents: 'none',
   },
   stringLinesOverlay: {
     position: 'absolute',
