@@ -286,7 +286,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 1,
+    zIndex: 0,
   },
   doubleInlayTop: {
     position: 'absolute',
@@ -299,7 +299,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 1,
+    zIndex: 0,
   },
   doubleInlayBottom: {
     position: 'absolute',
@@ -312,7 +312,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 1,
+    zIndex: 0,
   },
   hello: {
     fontSize: '1.4rem',
