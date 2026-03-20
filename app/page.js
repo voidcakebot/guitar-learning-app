@@ -171,6 +171,13 @@ export default function Home() {
   };
 
   const openAnkiComposer = (item) => {
+    if (activeLibraryItem?.id === item.id) {
+      setActiveLibraryItem(null);
+      setAnkiFront('');
+      setAnkiBack('');
+      setAnkiStatus('');
+      return;
+    }
     setActiveLibraryItem(item);
     setAnkiFront(item.name);
     setAnkiBack('');
@@ -206,10 +213,10 @@ export default function Home() {
   return (
     <main style={styles.page}>
       <h1 style={styles.title}>guitar Note</h1>
-      <div style={styles.buttonRow}>
-        <button type="button" style={mode === 'note' ? styles.buttonActive : styles.button} onClick={() => setMode('note')}>Note</button>
-        <button type="button" style={mode === 'library' ? styles.buttonActive : styles.button} onClick={() => setMode('library')}>Library</button>
-        <button type="button" style={mode === 'learn' ? styles.buttonActive : styles.button} onClick={() => setMode('learn')}>Learn</button>
+      <div style={styles.topNav}>
+        <button type="button" style={mode === 'note' ? styles.navButtonActive : styles.navButton} onClick={() => setMode('note')}>Note</button>
+        <button type="button" style={mode === 'library' ? styles.navButtonActive : styles.navButton} onClick={() => setMode('library')}>Library</button>
+        <button type="button" style={mode === 'learn' ? styles.navButtonActive : styles.navButton} onClick={() => setMode('learn')}>Learn</button>
       </div>
 
       {mode === 'note' ? (
@@ -240,22 +247,23 @@ export default function Home() {
         <section style={styles.savedList}>
           {savedItems.length === 0 ? <div style={styles.emptyState}>No saved entries yet.</div> : null}
           {savedItems.map((item) => (
-            <button key={item.id} type="button" style={styles.savedItemButton} onClick={() => openAnkiComposer(item)}>
-              <div style={styles.savedName}>{item.name}</div>
-              <div style={styles.savedMeta}>{item.category} · {TUNINGS[item.tuningId]?.label || item.tuningId} · {item.markers.length} markers</div>
-              {item.tags?.length > 0 ? <div style={styles.savedTags}>{item.tags.join(', ')}</div> : null}
-            </button>
+            <div key={item.id} style={styles.libraryItemWrap}>
+              <button type="button" style={activeLibraryItem?.id === item.id ? styles.savedItemButtonActive : styles.savedItemButton} onClick={() => openAnkiComposer(item)}>
+                <div style={styles.savedName}>{item.name}</div>
+                <div style={styles.savedMeta}>{item.category} · {TUNINGS[item.tuningId]?.label || item.tuningId} · {item.markers.length} markers</div>
+                {item.tags?.length > 0 ? <div style={styles.savedTags}>{item.tags.join(', ')}</div> : null}
+              </button>
+              {activeLibraryItem?.id === item.id ? (
+                <section style={styles.popupCard}>
+                  <div style={styles.saveHeader}>Create Anki card</div>
+                  <input value={ankiFront} onChange={(event) => setAnkiFront(event.target.value)} placeholder="Front side" style={styles.input} />
+                  <textarea value={ankiBack} onChange={(event) => setAnkiBack(event.target.value)} placeholder="Back side" style={styles.textarea} />
+                  <button type="button" onClick={saveAnkiCard} style={styles.saveButton}>Save Anki card</button>
+                  {ankiStatus ? <div style={styles.statusText}>{ankiStatus}</div> : null}
+                </section>
+              ) : null}
+            </div>
           ))}
-
-          {activeLibraryItem ? (
-            <section style={styles.saveCard}>
-              <div style={styles.saveHeader}>Create Anki card for {activeLibraryItem.name}</div>
-              <input value={ankiFront} onChange={(event) => setAnkiFront(event.target.value)} placeholder="Front side" style={styles.input} />
-              <textarea value={ankiBack} onChange={(event) => setAnkiBack(event.target.value)} placeholder="Back side" style={styles.textarea} />
-              <button type="button" onClick={saveAnkiCard} style={styles.saveButton}>Save Anki card</button>
-              {ankiStatus ? <div style={styles.statusText}>{ankiStatus}</div> : null}
-            </section>
-          ) : null}
         </section>
       ) : null}
 
@@ -277,16 +285,17 @@ export default function Home() {
 const styles = {
   page: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', background: '#f5f3ed', color: '#161616', fontFamily: 'Arial, sans-serif', padding: '24px 10px 40px', boxSizing: 'border-box' },
   title: { fontSize: '3rem', fontWeight: 700, margin: 0, textAlign: 'center' },
-  buttonRow: { display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' },
-  button: { minWidth: '130px', padding: '14px 28px', fontSize: '1.1rem', border: '2px solid #111', borderRadius: '14px', background: '#fff', cursor: 'pointer' },
-  buttonActive: { minWidth: '130px', padding: '14px 28px', fontSize: '1.1rem', border: '2px solid #111', borderRadius: '14px', background: '#111', color: '#fff', cursor: 'pointer' },
+  topNav: { width: '100%', maxWidth: '560px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' },
+  navButton: { width: '100%', padding: '14px 8px', fontSize: '1rem', border: '2px solid #111', borderRadius: '14px', background: '#fff', cursor: 'pointer', boxSizing: 'border-box' },
+  navButtonActive: { width: '100%', padding: '14px 8px', fontSize: '1rem', border: '2px solid #111', borderRadius: '14px', background: '#111', color: '#fff', cursor: 'pointer', boxSizing: 'border-box' },
   selectWrap: { display: 'flex', flexDirection: 'column', gap: '6px', width: '100%', maxWidth: '560px' },
   selectLabel: { fontSize: '0.95rem', fontWeight: 700 },
   select: { padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff' },
   svgWrap: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '8px' },
   svgBoard: { width: '100%', height: 'auto', display: 'block' },
-  helpCard: { width: '100%', maxWidth: '560px', padding: '12px 14px', borderRadius: '12px', background: '#fff7cf', border: '1px solid rgba(17,17,17,0.14)', fontSize: '0.95rem' },
+  helpCard: { width: '100%', maxWidth: '560px', padding: '12px 14px', borderRadius: '12px', background: '#fff7cf', border: '1px solid rgba(17,17,17,0.14)', fontSize: '0.95rem', boxSizing: 'border-box' },
   saveCard: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px', border: '2px solid #111', borderRadius: '16px', background: '#fff', boxSizing: 'border-box', overflow: 'hidden' },
+  popupCard: { width: '100%', display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px', border: '2px solid #111', borderRadius: '16px', background: '#fff', boxSizing: 'border-box' },
   saveHeader: { fontSize: '1rem', fontWeight: 700 },
   input: { width: '100%', padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff', boxSizing: 'border-box' },
   textarea: { width: '100%', minHeight: '120px', padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff', resize: 'vertical', boxSizing: 'border-box' },
@@ -294,7 +303,9 @@ const styles = {
   statusText: { fontSize: '0.92rem', opacity: 0.8 },
   savedList: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px' },
   savedItem: { padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)' },
-  savedItemButton: { padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'left', cursor: 'pointer' },
+  libraryItemWrap: { display: 'flex', flexDirection: 'column', gap: '8px' },
+  savedItemButton: { width: '100%', padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
+  savedItemButtonActive: { width: '100%', padding: '14px 16px', borderRadius: '14px', background: '#eef4ff', border: '2px solid #111', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
   savedName: { fontWeight: 700 },
   savedMeta: { fontSize: '0.92rem', opacity: 0.75, marginTop: '4px' },
   savedTags: { fontSize: '0.92rem', marginTop: '6px' },
