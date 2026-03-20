@@ -53,3 +53,22 @@ export async function POST(request) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    if (!id) return Response.json({ error: 'Missing id' }, { status: 400 });
+
+    const sql = getSql();
+    await ensureTable(sql);
+    await sql`
+      DELETE FROM anki_cards
+      WHERE id = ${id} AND user_id = ${DEFAULT_USER_ID}
+    `;
+
+    return Response.json({ ok: true });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}

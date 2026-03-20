@@ -238,6 +238,23 @@ export default function Home() {
     }));
   };
 
+  const deleteLibraryItem = async (id) => {
+    const response = await fetch(`/api/library?id=${id}`, { method: 'DELETE' });
+    if (!response.ok) return;
+    setSavedItems((current) => current.filter((item) => item.id !== id));
+    if (activeLibraryItem?.id === id) {
+      setActiveLibraryItem(null);
+      setAnkiFront('');
+      setAnkiStatus('');
+    }
+  };
+
+  const deleteAnkiCard = async (id) => {
+    const response = await fetch(`/api/anki-cards?id=${id}`, { method: 'DELETE' });
+    if (!response.ok) return;
+    setAnkiCards((current) => current.filter((card) => card.id !== id));
+  };
+
   return (
     <main style={styles.page}>
       <h1 style={styles.title}>guitar Note</h1>
@@ -276,11 +293,14 @@ export default function Home() {
           {savedItems.length === 0 ? <div style={styles.emptyState}>No saved entries yet.</div> : null}
           {savedItems.map((item) => (
             <div key={item.id} style={styles.libraryItemWrap}>
-              <button type="button" style={activeLibraryItem?.id === item.id ? styles.savedItemButtonActive : styles.savedItemButton} onClick={() => openAnkiComposer(item)}>
+              <div style={styles.itemRow}>
+                <button type="button" style={activeLibraryItem?.id === item.id ? styles.savedItemButtonActive : styles.savedItemButton} onClick={() => openAnkiComposer(item)}>
                 <div style={styles.savedName}>{item.name}</div>
                 <div style={styles.savedMeta}>{item.category} · {TUNINGS[item.tuningId]?.label || item.tuningId} · {item.markers.length} markers</div>
                 {item.tags?.length > 0 ? <div style={styles.savedTags}>{item.tags.join(', ')}</div> : null}
-              </button>
+                </button>
+                <button type="button" style={styles.deleteButton} onClick={() => deleteLibraryItem(item.id)}>Delete</button>
+              </div>
               {activeLibraryItem?.id === item.id ? (
                 <section style={styles.popupCard}>
                   <div style={styles.saveHeader}>Create Anki card</div>
@@ -345,14 +365,16 @@ const styles = {
   statusText: { fontSize: '0.92rem', opacity: 0.8 },
   savedList: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px' },
   savedItem: { padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)' },
+  itemRow: { display: 'flex', gap: '10px', alignItems: 'stretch' },
   libraryItemWrap: { display: 'flex', flexDirection: 'column', gap: '8px' },
-  savedItemButton: { width: '100%', padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
-  savedItemButtonActive: { width: '100%', padding: '14px 16px', borderRadius: '14px', background: '#eef4ff', border: '2px solid #111', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
+  savedItemButton: { flex: 1, padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
+  savedItemButtonActive: { flex: 1, padding: '14px 16px', borderRadius: '14px', background: '#eef4ff', border: '2px solid #111', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
   savedName: { fontWeight: 700 },
   savedMeta: { fontSize: '0.92rem', opacity: 0.75, marginTop: '4px' },
   savedTags: { fontSize: '0.92rem', marginTop: '6px' },
   emptyState: { padding: '20px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'center' },
-  learnCard: { width: '100%', padding: '18px 16px', borderRadius: '16px', background: '#fff', border: '2px solid #111', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
+  learnCard: { flex: 1, padding: '18px 16px', borderRadius: '16px', background: '#fff', border: '2px solid #111', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
+  deleteButton: { padding: '0 14px', minWidth: '88px', borderRadius: '12px', border: '2px solid #111', background: '#fff', cursor: 'pointer', fontSize: '0.95rem' },
   learnFront: { fontSize: '1.1rem', fontWeight: 700 },
   learnBack: { display: 'flex', flexDirection: 'column', gap: '10px' },
 };
