@@ -22,7 +22,7 @@ function getNote(open, fret) {
 
 function SvgFretboard({ selected, onToggle }) {
   const width = 420;
-  const rowHeight = 42;
+  const rowHeight = 64;
   const headerHeight = 30;
   const fretNumberWidth = 28;
   const boardX = 42;
@@ -125,7 +125,7 @@ function SvgFretboard({ selected, onToggle }) {
                 <circle
                   cx={stringXs[stringIndex]}
                   cy={rowCenterY(fret)}
-                  r="18"
+                  r="21"
                   fill={active ? '#121212' : fret === 0 ? '#efe5d5' : '#fbfaf7'}
                   stroke="#151515"
                   strokeWidth="2"
@@ -139,7 +139,7 @@ function SvgFretboard({ selected, onToggle }) {
                   x={stringXs[stringIndex]}
                   y={rowCenterY(fret) + 4}
                   textAnchor="middle"
-                  fontSize="10"
+                  fontSize="11"
                   fontWeight="700"
                   fill={active ? '#fff' : '#161616'}
                   pointerEvents="none"
