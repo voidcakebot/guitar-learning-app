@@ -22,7 +22,7 @@ function makeUuid() {
   return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function SvgFretboard({ tuningNotes, selected, onToggle }) {
+function buildFretboardSvg({ tuningNotes, selected, interactive, onToggle }) {
   const width = 420;
   const rowHeight = 64;
   const headerHeight = 30;
@@ -34,65 +34,77 @@ function SvgFretboard({ tuningNotes, selected, onToggle }) {
   const rowCenterY = (fret) => boardY + fret * rowHeight + rowHeight / 2;
 
   return (
-    <div style={styles.svgWrap}>
-      <svg viewBox={`0 0 ${width} ${boardHeight + headerHeight + 8}`} style={styles.svgBoard}>
-        <rect x={boardX} y={boardY} width={boardWidth} height={boardHeight} rx="16" fill="#cf9a61" />
-        {tuningNotes.map((note, index) => (
-          <text key={note + index} x={stringXs[index]} y={20} textAnchor="middle" fontSize="14" fontWeight="700" fill="#161616">{note}</text>
-        ))}
-        {Array.from({ length: FRET_COUNT + 1 }, (_, fret) => (
-          <text key={`fret-label-${fret}`} x={18} y={rowCenterY(fret) + 4} textAnchor="middle" fontSize="12" fill="#51402c">{fret}</text>
-        ))}
-        {INLAYS.filter((fret) => fret !== 12).map((fret) => (
-          <circle key={`inlay-${fret}`} cx={boardX + boardWidth / 2} cy={rowCenterY(fret)} r="9" fill="#fff7cf" stroke="rgba(60,45,20,0.22)" strokeWidth="2" />
-        ))}
-        <circle cx={boardX + boardWidth * 0.35} cy={rowCenterY(12)} r="9" fill="#fff7cf" stroke="rgba(60,45,20,0.22)" strokeWidth="2" />
-        <circle cx={boardX + boardWidth * 0.65} cy={rowCenterY(12)} r="9" fill="#fff7cf" stroke="rgba(60,45,20,0.22)" strokeWidth="2" />
-        {Array.from({ length: FRET_COUNT }, (_, index) => {
-          const fret = index + 1;
-          const y = boardY + fret * rowHeight;
-          return <line key={`wire-${fret}`} x1={boardX} y1={y} x2={boardX + boardWidth} y2={y} stroke="#aa8358" strokeOpacity="0.72" strokeWidth="1.2" />;
-        })}
-        {tuningNotes.map((_, index) => {
-          const x = stringXs[index];
-          return <line key={`string-${index}`} x1={x} y1={boardY + rowHeight} x2={x} y2={boardY + boardHeight} stroke="#bfc3c9" strokeWidth={STRING_GAUGES[index]} strokeLinecap="round" />;
-        })}
-        <line x1={boardX} y1={boardY + rowHeight} x2={boardX + boardWidth} y2={boardY + rowHeight} stroke="#f4eee1" strokeWidth="8" />
-        {Array.from({ length: FRET_COUNT + 1 }, (_, fret) =>
-          tuningNotes.map((openNote, stringIndex) => {
-            const id = `svg-${fret}-${stringIndex}`;
-            const entry = selected[id];
-            const active = !!entry;
-            const muted = !!entry?.isMuted;
-            return (
-              <g key={id}>
-                <circle
-                  cx={stringXs[stringIndex]}
-                  cy={rowCenterY(fret)}
-                  r="21"
-                  fill={active ? '#121212' : fret === 0 ? '#efe5d5' : '#fbfaf7'}
-                  stroke="#151515"
-                  strokeWidth="2"
-                  style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
-                  onPointerDown={(event) => {
-                    event.preventDefault();
-                    onToggle(id, fret, stringIndex);
-                  }}
-                />
-                {muted ? (
-                  <text x={stringXs[stringIndex]} y={rowCenterY(fret) + 5} textAnchor="middle" fontSize="16" fontWeight="700" fill="#fff" pointerEvents="none" style={{ userSelect: 'none' }}>X</text>
-                ) : (
-                  <text x={stringXs[stringIndex]} y={rowCenterY(fret) + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill={active ? '#fff' : '#161616'} pointerEvents="none" style={{ userSelect: 'none' }}>
-                    {getNote(openNote, fret)}
-                  </text>
-                )}
-              </g>
-            );
-          })
-        )}
-      </svg>
-    </div>
+    <svg viewBox={`0 0 ${width} ${boardHeight + headerHeight + 8}`} style={styles.svgBoard}>
+      <rect x={boardX} y={boardY} width={boardWidth} height={boardHeight} rx="16" fill="#cf9a61" />
+      {tuningNotes.map((note, index) => (
+        <text key={note + index} x={stringXs[index]} y={20} textAnchor="middle" fontSize="14" fontWeight="700" fill="#161616">{note}</text>
+      ))}
+      {Array.from({ length: FRET_COUNT + 1 }, (_, fret) => (
+        <text key={`fret-label-${fret}`} x={18} y={rowCenterY(fret) + 4} textAnchor="middle" fontSize="12" fill="#51402c">{fret}</text>
+      ))}
+      {INLAYS.filter((fret) => fret !== 12).map((fret) => (
+        <circle key={`inlay-${fret}`} cx={boardX + boardWidth / 2} cy={rowCenterY(fret)} r="9" fill="#fff7cf" stroke="rgba(60,45,20,0.22)" strokeWidth="2" />
+      ))}
+      <circle cx={boardX + boardWidth * 0.35} cy={rowCenterY(12)} r="9" fill="#fff7cf" stroke="rgba(60,45,20,0.22)" strokeWidth="2" />
+      <circle cx={boardX + boardWidth * 0.65} cy={rowCenterY(12)} r="9" fill="#fff7cf" stroke="rgba(60,45,20,0.22)" strokeWidth="2" />
+      {Array.from({ length: FRET_COUNT }, (_, index) => {
+        const fret = index + 1;
+        const y = boardY + fret * rowHeight;
+        return <line key={`wire-${fret}`} x1={boardX} y1={y} x2={boardX + boardWidth} y2={y} stroke="#aa8358" strokeOpacity="0.72" strokeWidth="1.2" />;
+      })}
+      {tuningNotes.map((_, index) => {
+        const x = stringXs[index];
+        return <line key={`string-${index}`} x1={x} y1={boardY + rowHeight} x2={x} y2={boardY + boardHeight} stroke="#bfc3c9" strokeWidth={STRING_GAUGES[index]} strokeLinecap="round" />;
+      })}
+      <line x1={boardX} y1={boardY + rowHeight} x2={boardX + boardWidth} y2={boardY + rowHeight} stroke="#f4eee1" strokeWidth="8" />
+      {Array.from({ length: FRET_COUNT + 1 }, (_, fret) =>
+        tuningNotes.map((openNote, stringIndex) => {
+          const id = `svg-${fret}-${stringIndex}`;
+          const entry = selected[id];
+          const active = !!entry;
+          const muted = !!entry?.isMuted;
+          const circleProps = interactive
+            ? {
+                style: { cursor: 'pointer', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' },
+                onPointerDown: (event) => {
+                  event.preventDefault();
+                  onToggle(id, fret, stringIndex);
+                },
+              }
+            : {};
+
+          return (
+            <g key={id}>
+              <circle
+                cx={stringXs[stringIndex]}
+                cy={rowCenterY(fret)}
+                r="21"
+                fill={active ? '#121212' : fret === 0 ? '#efe5d5' : '#fbfaf7'}
+                stroke="#151515"
+                strokeWidth="2"
+                {...circleProps}
+              />
+              {muted ? (
+                <text x={stringXs[stringIndex]} y={rowCenterY(fret) + 5} textAnchor="middle" fontSize="16" fontWeight="700" fill="#fff" pointerEvents="none" style={{ userSelect: 'none' }}>X</text>
+              ) : (
+                <text x={stringXs[stringIndex]} y={rowCenterY(fret) + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill={active ? '#fff' : '#161616'} pointerEvents="none" style={{ userSelect: 'none' }}>
+                  {getNote(openNote, fret)}
+                </text>
+              )}
+            </g>
+          );
+        })
+      )}
+    </svg>
   );
+}
+
+function SvgFretboard(props) {
+  return <div style={styles.svgWrap}>{buildFretboardSvg({ ...props, interactive: true })}</div>;
+}
+
+function StaticFretboardPreview({ tuningNotes, selected }) {
+  return <div style={styles.previewWrap}>{buildFretboardSvg({ tuningNotes, selected, interactive: false })}</div>;
 }
 
 export default function Home() {
@@ -111,6 +123,11 @@ export default function Home() {
   const [ankiStatus, setAnkiStatus] = useState('');
 
   const tuningNotes = useMemo(() => TUNINGS[selectedTuning].notes, [selectedTuning]);
+  const activePreviewTuning = activeLibraryItem ? TUNINGS[activeLibraryItem.tuningId]?.notes || TUNINGS.standard.notes : tuningNotes;
+  const activePreviewSelected = useMemo(() => {
+    if (!activeLibraryItem?.markers) return {};
+    return Object.fromEntries(activeLibraryItem.markers.map((marker) => [`svg-${marker.fretIndex}-${marker.stringIndex}`, marker]));
+  }, [activeLibraryItem]);
 
   useEffect(() => {
     async function loadData() {
@@ -180,17 +197,17 @@ export default function Home() {
     }
     setActiveLibraryItem(item);
     setAnkiFront(item.name);
-    setAnkiBack('');
+    setAnkiBack('Fretboard preview');
     setAnkiStatus('');
   };
 
   const saveAnkiCard = async () => {
-    if (!activeLibraryItem || !ankiFront.trim() || !ankiBack.trim()) return;
+    if (!activeLibraryItem || !ankiFront.trim()) return;
     const card = {
       id: makeUuid(),
       sourceShapeId: activeLibraryItem.id,
       front: ankiFront.trim(),
-      back: ankiBack.trim(),
+      back: ankiBack.trim() || 'Fretboard preview',
     };
     setAnkiStatus('Saving...');
     const response = await fetch('/api/anki-cards', {
@@ -257,7 +274,8 @@ export default function Home() {
                 <section style={styles.popupCard}>
                   <div style={styles.saveHeader}>Create Anki card</div>
                   <textarea value={ankiFront} onChange={(event) => setAnkiFront(event.target.value)} placeholder="Front side" style={styles.textarea} />
-                  <textarea value={ankiBack} onChange={(event) => setAnkiBack(event.target.value)} placeholder="Back side" style={styles.textarea} />
+                  <div style={styles.previewLabel}>Back side preview</div>
+                  <StaticFretboardPreview tuningNotes={activePreviewTuning} selected={activePreviewSelected} />
                   <button type="button" onClick={saveAnkiCard} style={styles.saveButton}>Save Anki card</button>
                   {ankiStatus ? <div style={styles.statusText}>{ankiStatus}</div> : null}
                 </section>
@@ -292,6 +310,8 @@ const styles = {
   selectLabel: { fontSize: '0.95rem', fontWeight: 700 },
   select: { padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff' },
   svgWrap: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '8px' },
+  previewWrap: { width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(17,17,17,0.12)', background: '#f8f3ea' },
+  previewLabel: { fontSize: '0.95rem', fontWeight: 700 },
   svgBoard: { width: '100%', height: 'auto', display: 'block' },
   helpCard: { width: '100%', maxWidth: '560px', padding: '12px 14px', borderRadius: '12px', background: '#fff7cf', border: '1px solid rgba(17,17,17,0.14)', fontSize: '0.95rem', boxSizing: 'border-box' },
   saveCard: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px', border: '2px solid #111', borderRadius: '16px', background: '#fff', boxSizing: 'border-box', overflow: 'hidden' },
