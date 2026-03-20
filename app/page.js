@@ -97,7 +97,9 @@ function SvgFretboard({ tuningNotes, selected, onToggle }) {
         {Array.from({ length: FRET_COUNT + 1 }, (_, fret) =>
           tuningNotes.map((openNote, stringIndex) => {
             const id = `svg-${fret}-${stringIndex}`;
-            const active = !!selected[id];
+            const entry = selected[id];
+            const active = !!entry;
+            const muted = !!entry?.isMuted;
             return (
               <g key={id}>
                 <circle
@@ -113,18 +115,33 @@ function SvgFretboard({ tuningNotes, selected, onToggle }) {
                     onToggle(id, fret, stringIndex);
                   }}
                 />
-                <text
-                  x={stringXs[stringIndex]}
-                  y={rowCenterY(fret) + 4}
-                  textAnchor="middle"
-                  fontSize="11"
-                  fontWeight="700"
-                  fill={active ? '#fff' : '#161616'}
-                  pointerEvents="none"
-                  style={{ userSelect: 'none' }}
-                >
-                  {getNote(openNote, fret)}
-                </text>
+                {muted ? (
+                  <text
+                    x={stringXs[stringIndex]}
+                    y={rowCenterY(fret) + 5}
+                    textAnchor="middle"
+                    fontSize="16"
+                    fontWeight="700"
+                    fill="#fff"
+                    pointerEvents="none"
+                    style={{ userSelect: 'none' }}
+                  >
+                    X
+                  </text>
+                ) : (
+                  <text
+                    x={stringXs[stringIndex]}
+                    y={rowCenterY(fret) + 4}
+                    textAnchor="middle"
+                    fontSize="11"
+                    fontWeight="700"
+                    fill={active ? '#fff' : '#161616'}
+                    pointerEvents="none"
+                    style={{ userSelect: 'none' }}
+                  >
+                    {getNote(openNote, fret)}
+                  </text>
+                )}
               </g>
             );
           })
@@ -148,10 +165,23 @@ export default function Home() {
   const toggleSvgNote = (id, fretIndex, stringIndex) => {
     setSvgSelected((current) => {
       const next = { ...current };
-      if (next[id]) {
+      const existing = next[id];
+
+      if (fretIndex === 0) {
+        if (!existing) {
+          next[id] = { id, fretIndex, stringIndex, isMuted: false };
+        } else if (!existing.isMuted) {
+          next[id] = { id, fretIndex, stringIndex, isMuted: true };
+        } else {
+          delete next[id];
+        }
+        return next;
+      }
+
+      if (existing) {
         delete next[id];
       } else {
-        next[id] = { id, fretIndex, stringIndex };
+        next[id] = { id, fretIndex, stringIndex, isMuted: false };
       }
       return next;
     });
@@ -205,6 +235,10 @@ export default function Home() {
           </label>
 
           <SvgFretboard tuningNotes={tuningNotes} selected={svgSelected} onToggle={toggleSvgNote} />
+
+          <section style={styles.helpCard}>
+            Open string behavior: tap once = open, tap again = muted, tap third time = clear.
+          </section>
 
           <section style={styles.saveCard}>
             <div style={styles.saveHeader}>Save selection</div>
@@ -275,6 +309,15 @@ const styles = {
   },
   svgWrap: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '8px' },
   svgBoard: { width: '100%', height: 'auto', display: 'block' },
+  helpCard: {
+    width: '100%',
+    maxWidth: '560px',
+    padding: '12px 14px',
+    borderRadius: '12px',
+    background: '#fff7cf',
+    border: '1px solid rgba(17,17,17,0.14)',
+    fontSize: '0.95rem',
+  },
   saveCard: {
     width: '100%',
     maxWidth: '560px',
