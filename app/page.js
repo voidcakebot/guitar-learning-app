@@ -121,7 +121,7 @@ function SvgFretboard({ selected, onToggle }) {
             const id = `svg-${fret}-${stringIndex}`;
             const active = !!selected[id];
             return (
-              <g key={id} onClick={() => onToggle(id)} style={{ cursor: 'pointer' }}>
+              <g key={id}>
                 <circle
                   cx={stringXs[stringIndex]}
                   cy={rowCenterY(fret)}
@@ -129,6 +129,8 @@ function SvgFretboard({ selected, onToggle }) {
                   fill={active ? '#121212' : fret === 0 ? '#efe5d5' : '#fbfaf7'}
                   stroke="#151515"
                   strokeWidth="2"
+                  style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
+                  onClick={() => onToggle(id)}
                 />
                 <text
                   x={stringXs[stringIndex]}
@@ -137,6 +139,8 @@ function SvgFretboard({ selected, onToggle }) {
                   fontSize="10"
                   fontWeight="700"
                   fill={active ? '#fff' : '#161616'}
+                  pointerEvents="none"
+                  style={{ userSelect: 'none' }}
                 >
                   {getNote(string.open, fret)}
                 </text>
