@@ -1,16 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-const STRINGS = [
-  { name: 'E', open: 'E', gauge: 3.6 },
-  { name: 'A', open: 'A', gauge: 3.1 },
-  { name: 'D', open: 'D', gauge: 2.6 },
-  { name: 'G', open: 'G', gauge: 2.1 },
-  { name: 'B', open: 'B', gauge: 1.6 },
-  { name: 'e', open: 'E', gauge: 1.2 },
-];
+const TUNINGS = {
+  standard: {
+    label: 'Standard',
+    notes: ['E', 'A', 'D', 'G', 'B', 'E'],
+  },
+  dadgad: {
+    label: 'DADGAD',
+    notes: ['D', 'A', 'D', 'G', 'A', 'D'],
+  },
+};
 
+const STRING_GAUGES = [3.6, 3.1, 2.6, 2.1, 1.6, 1.2];
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const FRET_COUNT = 22;
 const INLAYS = [3, 5, 7, 9, 12, 15, 17, 19, 21];
@@ -20,7 +23,7 @@ function getNote(open, fret) {
   return NOTES[(startIndex + fret) % NOTES.length];
 }
 
-function SvgFretboard({ selected, onToggle }) {
+function SvgFretboard({ tuningNotes, selected, onToggle }) {
   const width = 420;
   const rowHeight = 64;
   const headerHeight = 30;
@@ -28,7 +31,7 @@ function SvgFretboard({ selected, onToggle }) {
   const boardY = headerHeight;
   const boardWidth = width - boardX - 8;
   const boardHeight = rowHeight * (FRET_COUNT + 1);
-  const stringXs = STRINGS.map((_, index) => boardX + (boardWidth / 12) + index * (boardWidth / 6));
+  const stringXs = tuningNotes.map((_, index) => boardX + boardWidth / 12 + index * (boardWidth / 6));
   const rowCenterY = (fret) => boardY + fret * rowHeight + rowHeight / 2;
 
   return (
@@ -36,9 +39,9 @@ function SvgFretboard({ selected, onToggle }) {
       <svg viewBox={`0 0 ${width} ${boardHeight + headerHeight + 8}`} style={styles.svgBoard}>
         <rect x={boardX} y={boardY} width={boardWidth} height={boardHeight} rx="16" fill="#cf9a61" />
 
-        {STRINGS.map((string, index) => (
-          <text key={string.name + index} x={stringXs[index]} y={20} textAnchor="middle" fontSize="14" fontWeight="700" fill="#161616">
-            {string.name}
+        {tuningNotes.map((note, index) => (
+          <text key={note + index} x={stringXs[index]} y={20} textAnchor="middle" fontSize="14" fontWeight="700" fill="#161616">
+            {note}
           </text>
         ))}
 
@@ -68,17 +71,17 @@ function SvgFretboard({ selected, onToggle }) {
           return <line key={`wire-${fret}`} x1={boardX} y1={y} x2={boardX + boardWidth} y2={y} stroke="#aa8358" strokeOpacity="0.72" strokeWidth="1.2" />;
         })}
 
-        {STRINGS.map((string, index) => {
+        {tuningNotes.map((_, index) => {
           const x = stringXs[index];
           return (
             <line
-              key={`string-${string.name}-${index}`}
+              key={`string-${index}`}
               x1={x}
               y1={boardY + rowHeight}
               x2={x}
               y2={boardY + boardHeight}
               stroke="#bfc3c9"
-              strokeWidth={string.gauge}
+              strokeWidth={STRING_GAUGES[index]}
               strokeLinecap="round"
             />
           );
@@ -87,7 +90,7 @@ function SvgFretboard({ selected, onToggle }) {
         <line x1={boardX} y1={boardY + rowHeight} x2={boardX + boardWidth} y2={boardY + rowHeight} stroke="#f4eee1" strokeWidth="8" />
 
         {Array.from({ length: FRET_COUNT + 1 }, (_, fret) =>
-          STRINGS.map((string, stringIndex) => {
+          tuningNotes.map((openNote, stringIndex) => {
             const id = `svg-${fret}-${stringIndex}`;
             const active = !!selected[id];
             return (
@@ -115,7 +118,7 @@ function SvgFretboard({ selected, onToggle }) {
                   pointerEvents="none"
                   style={{ userSelect: 'none' }}
                 >
-                  {getNote(string.open, fret)}
+                  {getNote(openNote, fret)}
                 </text>
               </g>
             );
@@ -128,7 +131,10 @@ function SvgFretboard({ selected, onToggle }) {
 
 export default function Home() {
   const [mode, setMode] = useState('home');
+  const [selectedTuning, setSelectedTuning] = useState('standard');
   const [svgSelected, setSvgSelected] = useState({});
+
+  const tuningNotes = useMemo(() => TUNINGS[selectedTuning].notes, [selectedTuning]);
 
   const toggleSvgNote = (id) => {
     setSvgSelected((current) => ({ ...current, [id]: !current[id] }));
@@ -147,7 +153,23 @@ export default function Home() {
         </button>
       </div>
 
-      {mode === 'note' ? <SvgFretboard selected={svgSelected} onToggle={toggleSvgNote} /> : <p style={styles.hello}>Hello my boy</p>}
+      {mode === 'note' ? (
+        <>
+          <label style={styles.selectWrap}>
+            <span style={styles.selectLabel}>Tuning</span>
+            <select value={selectedTuning} onChange={(event) => setSelectedTuning(event.target.value)} style={styles.select}>
+              {Object.entries(TUNINGS).map(([key, tuning]) => (
+                <option key={key} value={key}>
+                  {tuning.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <SvgFretboard tuningNotes={tuningNotes} selected={svgSelected} onToggle={toggleSvgNote} />
+        </>
+      ) : (
+        <p style={styles.hello}>Hello my boy</p>
+      )}
     </main>
   );
 }
@@ -171,6 +193,21 @@ const styles = {
   },
   buttonActive: {
     minWidth: '130px', padding: '14px 28px', fontSize: '1.1rem', border: '2px solid #111', borderRadius: '14px', background: '#111', color: '#fff', cursor: 'pointer',
+  },
+  selectWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px',
+    width: '100%',
+    maxWidth: '560px',
+  },
+  selectLabel: { fontSize: '0.95rem', fontWeight: 700 },
+  select: {
+    padding: '12px 14px',
+    fontSize: '1rem',
+    borderRadius: '12px',
+    border: '2px solid #111',
+    background: '#fff',
   },
   svgWrap: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '8px' },
   svgBoard: { width: '100%', height: 'auto', display: 'block' },
