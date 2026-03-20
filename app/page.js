@@ -65,7 +65,7 @@ function SvgFretboard({ selected, onToggle }) {
         {Array.from({ length: FRET_COUNT }, (_, index) => {
           const fret = index + 1;
           const y = boardY + fret * rowHeight;
-          return <line key={`wire-${fret}`} x1={boardX} y1={y} x2={boardX + boardWidth} y2={y} stroke="#b89467" strokeOpacity="0.55" strokeWidth="1" />;
+          return <line key={`wire-${fret}`} x1={boardX} y1={y} x2={boardX + boardWidth} y2={y} stroke="#aa8358" strokeOpacity="0.72" strokeWidth="1.2" />;
         })}
 
         {STRINGS.map((string, index) => {
