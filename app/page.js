@@ -125,12 +125,15 @@ function SvgFretboard({ selected, onToggle }) {
                 <circle
                   cx={stringXs[stringIndex]}
                   cy={rowCenterY(fret)}
-                  r="16"
+                  r="18"
                   fill={active ? '#121212' : fret === 0 ? '#efe5d5' : '#fbfaf7'}
                   stroke="#151515"
                   strokeWidth="2"
-                  style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent' }}
-                  onClick={() => onToggle(id)}
+                  style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
+                  onPointerDown={(event) => {
+                    event.preventDefault();
+                    onToggle(id);
+                  }}
                 />
                 <text
                   x={stringXs[stringIndex]}
