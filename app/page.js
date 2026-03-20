@@ -275,7 +275,7 @@ export default function Home() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', background: '#f5f3ed', color: '#161616', fontFamily: 'Arial, sans-serif', padding: '32px 12px 48px' },
+  page: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', background: '#f5f3ed', color: '#161616', fontFamily: 'Arial, sans-serif', padding: '24px 10px 40px', boxSizing: 'border-box' },
   title: { fontSize: '3rem', fontWeight: 700, margin: 0, textAlign: 'center' },
   buttonRow: { display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' },
   button: { minWidth: '130px', padding: '14px 28px', fontSize: '1.1rem', border: '2px solid #111', borderRadius: '14px', background: '#fff', cursor: 'pointer' },
@@ -286,11 +286,11 @@ const styles = {
   svgWrap: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '8px' },
   svgBoard: { width: '100%', height: 'auto', display: 'block' },
   helpCard: { width: '100%', maxWidth: '560px', padding: '12px 14px', borderRadius: '12px', background: '#fff7cf', border: '1px solid rgba(17,17,17,0.14)', fontSize: '0.95rem' },
-  saveCard: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px', border: '2px solid #111', borderRadius: '16px', background: '#fff' },
+  saveCard: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px', border: '2px solid #111', borderRadius: '16px', background: '#fff', boxSizing: 'border-box', overflow: 'hidden' },
   saveHeader: { fontSize: '1rem', fontWeight: 700 },
-  input: { padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff' },
-  textarea: { minHeight: '120px', padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff', resize: 'vertical' },
-  saveButton: { padding: '14px 16px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#111', color: '#fff', cursor: 'pointer' },
+  input: { width: '100%', padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff', boxSizing: 'border-box' },
+  textarea: { width: '100%', minHeight: '120px', padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff', resize: 'vertical', boxSizing: 'border-box' },
+  saveButton: { width: '100%', padding: '14px 16px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#111', color: '#fff', cursor: 'pointer', boxSizing: 'border-box' },
   statusText: { fontSize: '0.92rem', opacity: 0.8 },
   savedList: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px' },
   savedItem: { padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)' },
