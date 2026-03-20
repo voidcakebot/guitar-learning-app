@@ -256,7 +256,7 @@ export default function Home() {
               {activeLibraryItem?.id === item.id ? (
                 <section style={styles.popupCard}>
                   <div style={styles.saveHeader}>Create Anki card</div>
-                  <input value={ankiFront} onChange={(event) => setAnkiFront(event.target.value)} placeholder="Front side" style={styles.input} />
+                  <textarea value={ankiFront} onChange={(event) => setAnkiFront(event.target.value)} placeholder="Front side" style={styles.textarea} />
                   <textarea value={ankiBack} onChange={(event) => setAnkiBack(event.target.value)} placeholder="Back side" style={styles.textarea} />
                   <button type="button" onClick={saveAnkiCard} style={styles.saveButton}>Save Anki card</button>
                   {ankiStatus ? <div style={styles.statusText}>{ankiStatus}</div> : null}
