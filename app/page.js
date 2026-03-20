@@ -3,14 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 const TUNINGS = {
-  standard: {
-    label: 'Standard',
-    notes: ['E', 'A', 'D', 'G', 'B', 'E'],
-  },
-  dadgad: {
-    label: 'DADGAD',
-    notes: ['D', 'A', 'D', 'G', 'A', 'D'],
-  },
+  standard: { label: 'Standard', notes: ['E', 'A', 'D', 'G', 'B', 'E'] },
+  dadgad: { label: 'DADGAD', notes: ['D', 'A', 'D', 'G', 'A', 'D'] },
 };
 
 const STRING_GAUGES = [3.6, 3.1, 2.6, 2.1, 1.6, 1.2];
@@ -110,16 +104,26 @@ export default function Home() {
   const [tags, setTags] = useState('');
   const [savedItems, setSavedItems] = useState([]);
   const [saveStatus, setSaveStatus] = useState('');
+  const [ankiCards, setAnkiCards] = useState([]);
+  const [activeLibraryItem, setActiveLibraryItem] = useState(null);
+  const [ankiFront, setAnkiFront] = useState('');
+  const [ankiBack, setAnkiBack] = useState('');
+  const [ankiStatus, setAnkiStatus] = useState('');
 
   const tuningNotes = useMemo(() => TUNINGS[selectedTuning].notes, [selectedTuning]);
 
   useEffect(() => {
-    async function loadLibrary() {
-      const response = await fetch('/api/library', { cache: 'no-store' });
-      const data = await response.json();
-      if (response.ok) setSavedItems(data.items || []);
+    async function loadData() {
+      const [libraryResponse, cardsResponse] = await Promise.all([
+        fetch('/api/library', { cache: 'no-store' }),
+        fetch('/api/anki-cards', { cache: 'no-store' }),
+      ]);
+      const libraryData = await libraryResponse.json();
+      const cardsData = await cardsResponse.json();
+      if (libraryResponse.ok) setSavedItems(libraryData.items || []);
+      if (cardsResponse.ok) setAnkiCards(cardsData.items || []);
     }
-    loadLibrary();
+    loadData();
   }, []);
 
   const toggleSvgNote = (id, fretIndex, stringIndex) => {
@@ -141,7 +145,6 @@ export default function Home() {
   const handleSave = async () => {
     const markers = Object.values(svgSelected);
     if (!name.trim() || markers.length === 0) return;
-
     const item = {
       id: makeUuid(),
       name: name.trim(),
@@ -150,24 +153,54 @@ export default function Home() {
       tuningId: selectedTuning,
       markers,
     };
-
     setSaveStatus('Saving...');
     const response = await fetch('/api/library', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item),
     });
-
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
       setSaveStatus(data.error || 'Save failed');
       return;
     }
-
     setSavedItems((current) => [item, ...current]);
     setName('');
     setTags('');
     setSaveStatus('Saved');
+  };
+
+  const openAnkiComposer = (item) => {
+    setActiveLibraryItem(item);
+    setAnkiFront(item.name);
+    setAnkiBack('');
+    setAnkiStatus('');
+  };
+
+  const saveAnkiCard = async () => {
+    if (!activeLibraryItem || !ankiFront.trim() || !ankiBack.trim()) return;
+    const card = {
+      id: makeUuid(),
+      sourceShapeId: activeLibraryItem.id,
+      front: ankiFront.trim(),
+      back: ankiBack.trim(),
+    };
+    setAnkiStatus('Saving...');
+    const response = await fetch('/api/anki-cards', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(card),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      setAnkiStatus(data.error || 'Save failed');
+      return;
+    }
+    setAnkiCards((current) => [card, ...current]);
+    setAnkiFront('');
+    setAnkiBack('');
+    setActiveLibraryItem(null);
+    setAnkiStatus('Saved');
   };
 
   return (
@@ -207,16 +240,36 @@ export default function Home() {
         <section style={styles.savedList}>
           {savedItems.length === 0 ? <div style={styles.emptyState}>No saved entries yet.</div> : null}
           {savedItems.map((item) => (
-            <div key={item.id} style={styles.savedItem}>
+            <button key={item.id} type="button" style={styles.savedItemButton} onClick={() => openAnkiComposer(item)}>
               <div style={styles.savedName}>{item.name}</div>
               <div style={styles.savedMeta}>{item.category} · {TUNINGS[item.tuningId]?.label || item.tuningId} · {item.markers.length} markers</div>
               {item.tags?.length > 0 ? <div style={styles.savedTags}>{item.tags.join(', ')}</div> : null}
+            </button>
+          ))}
+
+          {activeLibraryItem ? (
+            <section style={styles.saveCard}>
+              <div style={styles.saveHeader}>Create Anki card for {activeLibraryItem.name}</div>
+              <input value={ankiFront} onChange={(event) => setAnkiFront(event.target.value)} placeholder="Front side" style={styles.input} />
+              <textarea value={ankiBack} onChange={(event) => setAnkiBack(event.target.value)} placeholder="Back side" style={styles.textarea} />
+              <button type="button" onClick={saveAnkiCard} style={styles.saveButton}>Save Anki card</button>
+              {ankiStatus ? <div style={styles.statusText}>{ankiStatus}</div> : null}
+            </section>
+          ) : null}
+        </section>
+      ) : null}
+
+      {mode === 'learn' ? (
+        <section style={styles.savedList}>
+          {ankiCards.length === 0 ? <div style={styles.emptyState}>No saved Anki cards yet.</div> : null}
+          {ankiCards.map((card) => (
+            <div key={card.id} style={styles.savedItem}>
+              <div style={styles.savedName}>{card.front}</div>
+              <div style={styles.savedTags}>{card.back}</div>
             </div>
           ))}
         </section>
       ) : null}
-
-      {mode === 'learn' ? <p style={styles.hello}>Hello my boy</p> : null}
     </main>
   );
 }
@@ -236,13 +289,14 @@ const styles = {
   saveCard: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px', padding: '16px', border: '2px solid #111', borderRadius: '16px', background: '#fff' },
   saveHeader: { fontSize: '1rem', fontWeight: 700 },
   input: { padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff' },
+  textarea: { minHeight: '120px', padding: '12px 14px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#fff', resize: 'vertical' },
   saveButton: { padding: '14px 16px', fontSize: '1rem', borderRadius: '12px', border: '2px solid #111', background: '#111', color: '#fff', cursor: 'pointer' },
   statusText: { fontSize: '0.92rem', opacity: 0.8 },
   savedList: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '10px' },
   savedItem: { padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)' },
+  savedItemButton: { padding: '14px 16px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'left', cursor: 'pointer' },
   savedName: { fontWeight: 700 },
   savedMeta: { fontSize: '0.92rem', opacity: 0.75, marginTop: '4px' },
   savedTags: { fontSize: '0.92rem', marginTop: '6px' },
   emptyState: { padding: '20px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'center' },
-  hello: { fontSize: '1.4rem', margin: 0 },
 };
