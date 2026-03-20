@@ -288,22 +288,22 @@ const styles = {
     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.92rem', color: '#51402c', background: '#ead4b7', borderBottom: '1px solid rgba(90, 60, 30, 0.1)',
   },
   nutRow: {
-    position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', minHeight: '56px', alignItems: 'center', background: '#d7b083', borderBottom: '8px solid #f4eee1',
+    position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', minHeight: '64px', alignItems: 'center', background: '#d7b083', borderBottom: '8px solid #f4eee1',
   },
-  fretRow: { position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', minHeight: '56px', alignItems: 'center' },
+  fretRow: { position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', minHeight: '64px', alignItems: 'center' },
   fretWire: {
     position: 'absolute', left: 0, right: 0, bottom: 0, height: '1px', background: '#b89467', opacity: 0.55, zIndex: 1, pointerEvents: 'none',
   },
-  cellWrap: { position: 'relative', display: 'grid', placeItems: 'center', height: '100%' },
+  cellWrap: { position: 'relative', display: 'grid', placeItems: 'center', height: '100%', padding: '6px 0' },
   stringLine: {
     position: 'absolute', top: 0, bottom: 0, left: '50%', background: '#bfc3c9', boxShadow: '0 0 1px rgba(0,0,0,0.18)', transform: 'translateX(-50%)', zIndex: 3, pointerEvents: 'none',
   },
   noteCell: {
-    position: 'relative', zIndex: 4, width: '38px', height: '38px', margin: '0 auto', borderRadius: '999px', border: '2px solid #151515', background: '#fbfaf7', display: 'grid', placeItems: 'center', cursor: 'pointer',
+    position: 'relative', zIndex: 4, width: '42px', height: '42px', margin: '0 auto', borderRadius: '999px', border: '2px solid #151515', background: '#fbfaf7', display: 'grid', placeItems: 'center', cursor: 'pointer', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation',
   },
   openNoteCell: { background: '#efe5d5' },
   noteCellActive: { background: '#121212', color: '#fff' },
-  noteText: { fontSize: '0.78rem', fontWeight: 700 },
+  noteText: { fontSize: '0.76rem', fontWeight: 700 },
   singleInlay: {
     position: 'absolute', left: '50%', top: '50%', width: '18px', height: '18px', borderRadius: '999px', background: '#fff7cf', border: '2px solid rgba(60, 45, 20, 0.22)', boxShadow: '0 0 0 2px rgba(255,255,255,0.18)', transform: 'translate(-50%, -50%)', zIndex: 0,
   },
