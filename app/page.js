@@ -119,8 +119,8 @@ export default function Home() {
   const [ankiCards, setAnkiCards] = useState([]);
   const [activeLibraryItem, setActiveLibraryItem] = useState(null);
   const [ankiFront, setAnkiFront] = useState('');
-  const [ankiBack, setAnkiBack] = useState('');
   const [ankiStatus, setAnkiStatus] = useState('');
+  const [flippedCards, setFlippedCards] = useState({});
 
   const tuningNotes = useMemo(() => TUNINGS[selectedTuning].notes, [selectedTuning]);
   const activePreviewTuning = activeLibraryItem ? TUNINGS[activeLibraryItem.tuningId]?.notes || TUNINGS.standard.notes : tuningNotes;
@@ -191,13 +191,11 @@ export default function Home() {
     if (activeLibraryItem?.id === item.id) {
       setActiveLibraryItem(null);
       setAnkiFront('');
-      setAnkiBack('');
       setAnkiStatus('');
       return;
     }
     setActiveLibraryItem(item);
     setAnkiFront(item.name);
-    setAnkiBack('Fretboard preview');
     setAnkiStatus('');
   };
 
@@ -207,7 +205,7 @@ export default function Home() {
       id: makeUuid(),
       sourceShapeId: activeLibraryItem.id,
       front: ankiFront.trim(),
-      back: ankiBack.trim() || 'Fretboard preview',
+      back: 'Fretboard preview',
     };
     setAnkiStatus('Saving...');
     const response = await fetch('/api/anki-cards', {
@@ -220,11 +218,24 @@ export default function Home() {
       setAnkiStatus(data.error || 'Save failed');
       return;
     }
-    setAnkiCards((current) => [card, ...current]);
+    setAnkiCards((current) => [
+      {
+        ...card,
+        tuningId: activeLibraryItem.tuningId,
+        markers: activeLibraryItem.markers,
+      },
+      ...current,
+    ]);
     setAnkiFront('');
-    setAnkiBack('');
     setActiveLibraryItem(null);
     setAnkiStatus('Saved');
+  };
+
+  const toggleLearnCard = (cardId) => {
+    setFlippedCards((current) => ({
+      ...current,
+      [cardId]: !current[cardId],
+    }));
   };
 
   return (
@@ -288,12 +299,23 @@ export default function Home() {
       {mode === 'learn' ? (
         <section style={styles.savedList}>
           {ankiCards.length === 0 ? <div style={styles.emptyState}>No saved Anki cards yet.</div> : null}
-          {ankiCards.map((card) => (
-            <div key={card.id} style={styles.savedItem}>
-              <div style={styles.savedName}>{card.front}</div>
-              <div style={styles.savedTags}>{card.back}</div>
-            </div>
-          ))}
+          {ankiCards.map((card) => {
+            const isFlipped = !!flippedCards[card.id];
+            const previewTuning = TUNINGS[card.tuningId]?.notes || TUNINGS.standard.notes;
+            const previewSelected = Object.fromEntries((card.markers || []).map((marker) => [`svg-${marker.fretIndex}-${marker.stringIndex}`, marker]));
+            return (
+              <button key={card.id} type="button" style={styles.learnCard} onClick={() => toggleLearnCard(card.id)}>
+                {!isFlipped ? (
+                  <div style={styles.learnFront}>{card.front}</div>
+                ) : (
+                  <div style={styles.learnBack}>
+                    <div style={styles.savedName}>{card.front}</div>
+                    {card.markers?.length ? <StaticFretboardPreview tuningNotes={previewTuning} selected={previewSelected} /> : <div style={styles.savedTags}>{card.back}</div>}
+                  </div>
+                )}
+              </button>
+            );
+          })}
         </section>
       ) : null}
     </main>
@@ -330,4 +352,7 @@ const styles = {
   savedMeta: { fontSize: '0.92rem', opacity: 0.75, marginTop: '4px' },
   savedTags: { fontSize: '0.92rem', marginTop: '6px' },
   emptyState: { padding: '20px', borderRadius: '14px', background: '#fff', border: '1px solid rgba(17,17,17,0.18)', textAlign: 'center' },
+  learnCard: { width: '100%', padding: '18px 16px', borderRadius: '16px', background: '#fff', border: '2px solid #111', textAlign: 'left', cursor: 'pointer', boxSizing: 'border-box' },
+  learnFront: { fontSize: '1.1rem', fontWeight: 700 },
+  learnBack: { display: 'flex', flexDirection: 'column', gap: '10px' },
 };
