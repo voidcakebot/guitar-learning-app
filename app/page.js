@@ -324,16 +324,19 @@ export default function Home() {
             const previewTuning = TUNINGS[card.tuningId]?.notes || TUNINGS.standard.notes;
             const previewSelected = Object.fromEntries((card.markers || []).map((marker) => [`svg-${marker.fretIndex}-${marker.stringIndex}`, marker]));
             return (
-              <button key={card.id} type="button" style={styles.learnCard} onClick={() => toggleLearnCard(card.id)}>
-                {!isFlipped ? (
-                  <div style={styles.learnFront}>{card.front}</div>
-                ) : (
-                  <div style={styles.learnBack}>
-                    <div style={styles.savedName}>{card.front}</div>
-                    {card.markers?.length ? <StaticFretboardPreview tuningNotes={previewTuning} selected={previewSelected} /> : <div style={styles.savedTags}>{card.back}</div>}
-                  </div>
-                )}
-              </button>
+              <div key={card.id} style={styles.itemRow}>
+                <button type="button" style={styles.learnCard} onClick={() => toggleLearnCard(card.id)}>
+                  {!isFlipped ? (
+                    <div style={styles.learnFront}>{card.front}</div>
+                  ) : (
+                    <div style={styles.learnBack}>
+                      <div style={styles.savedName}>{card.front}</div>
+                      {card.markers?.length ? <StaticFretboardPreview tuningNotes={previewTuning} selected={previewSelected} /> : <div style={styles.savedTags}>{card.back}</div>}
+                    </div>
+                  )}
+                </button>
+                <button type="button" style={styles.deleteButton} onClick={() => deleteAnkiCard(card.id)}>Delete</button>
+              </div>
             );
           })}
         </section>
