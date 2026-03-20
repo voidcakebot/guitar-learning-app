@@ -87,6 +87,8 @@ export default function Home() {
                       </>
                     ) : null}
 
+                    {row.fret !== 0 ? <div style={styles.fretWire} /> : null}
+
                     {row.positions.map((position, index) => {
                       const active = !!selected[position.id];
                       return (
@@ -96,7 +98,7 @@ export default function Home() {
                               style={{
                                 ...styles.stringLine,
                                 width: `${position.gauge}px`,
-                                opacity: 0.95 - index * 0.08,
+                                opacity: 0.92,
                               }}
                             />
                           ) : null}
@@ -115,8 +117,6 @@ export default function Home() {
                         </div>
                       );
                     })}
-
-                    {row.fret !== 0 ? <div style={styles.fretWire} /> : null}
                   </div>
                 </div>
               ))}
@@ -243,7 +243,7 @@ const styles = {
     height: '1px',
     background: '#b89467',
     opacity: 0.55,
-    zIndex: 2,
+    zIndex: 1,
     pointerEvents: 'none',
   },
   cellWrap: {
@@ -298,7 +298,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: 1,
+    zIndex: 0,
   },
   doubleInlayTop: {
     position: 'absolute',
@@ -311,7 +311,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: -1,
+    zIndex: 0,
   },
   doubleInlayBottom: {
     position: 'absolute',
@@ -324,7 +324,7 @@ const styles = {
     border: '2px solid rgba(60, 45, 20, 0.22)',
     boxShadow: '0 0 0 2px rgba(255,255,255,0.18)',
     transform: 'translate(-50%, -50%)',
-    zIndex: -1,
+    zIndex: 0,
   },
   hello: {
     fontSize: '1.4rem',
