@@ -23,6 +23,11 @@ function getNote(open, fret) {
   return NOTES[(startIndex + fret) % NOTES.length];
 }
 
+function makeUuid() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+  return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 function SvgFretboard({ tuningNotes, selected, onToggle }) {
   const width = 420;
   const rowHeight = 64;
@@ -105,7 +110,7 @@ function SvgFretboard({ tuningNotes, selected, onToggle }) {
                   style={{ cursor: 'pointer', WebkitTapHighlightColor: 'transparent', touchAction: 'manipulation' }}
                   onPointerDown={(event) => {
                     event.preventDefault();
-                    onToggle(id);
+                    onToggle(id, fret, stringIndex);
                   }}
                 />
                 <text
@@ -133,11 +138,44 @@ export default function Home() {
   const [mode, setMode] = useState('home');
   const [selectedTuning, setSelectedTuning] = useState('standard');
   const [svgSelected, setSvgSelected] = useState({});
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('chord');
+  const [tags, setTags] = useState('');
+  const [savedItems, setSavedItems] = useState([]);
 
   const tuningNotes = useMemo(() => TUNINGS[selectedTuning].notes, [selectedTuning]);
 
-  const toggleSvgNote = (id) => {
-    setSvgSelected((current) => ({ ...current, [id]: !current[id] }));
+  const toggleSvgNote = (id, fretIndex, stringIndex) => {
+    setSvgSelected((current) => {
+      const next = { ...current };
+      if (next[id]) {
+        delete next[id];
+      } else {
+        next[id] = { id, fretIndex, stringIndex };
+      }
+      return next;
+    });
+  };
+
+  const handleSave = () => {
+    const markers = Object.values(svgSelected);
+    if (!name.trim() || markers.length === 0) return;
+
+    const item = {
+      id: makeUuid(),
+      name: name.trim(),
+      category,
+      tags: tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      tuningId: selectedTuning,
+      markers,
+    };
+
+    setSavedItems((current) => [item, ...current]);
+    setName('');
+    setTags('');
   };
 
   return (
@@ -165,7 +203,33 @@ export default function Home() {
               ))}
             </select>
           </label>
+
           <SvgFretboard tuningNotes={tuningNotes} selected={svgSelected} onToggle={toggleSvgNote} />
+
+          <section style={styles.saveCard}>
+            <div style={styles.saveHeader}>Save selection</div>
+            <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Name" style={styles.input} />
+            <select value={category} onChange={(event) => setCategory(event.target.value)} style={styles.select}>
+              <option value="chord">Chord</option>
+              <option value="scale">Scale</option>
+            </select>
+            <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="Tags, comma separated" style={styles.input} />
+            <button type="button" onClick={handleSave} style={styles.saveButton}>
+              Save current selection ({Object.keys(svgSelected).length})
+            </button>
+          </section>
+
+          <section style={styles.savedList}>
+            {savedItems.map((item) => (
+              <div key={item.id} style={styles.savedItem}>
+                <div style={styles.savedName}>{item.name}</div>
+                <div style={styles.savedMeta}>
+                  {item.category} · {TUNINGS[item.tuningId].label} · {item.markers.length} markers
+                </div>
+                {item.tags.length > 0 ? <div style={styles.savedTags}>{item.tags.join(', ')}</div> : null}
+              </div>
+            ))}
+          </section>
         </>
       ) : (
         <p style={styles.hello}>Hello my boy</p>
@@ -211,5 +275,49 @@ const styles = {
   },
   svgWrap: { width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '8px' },
   svgBoard: { width: '100%', height: 'auto', display: 'block' },
+  saveCard: {
+    width: '100%',
+    maxWidth: '560px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    padding: '16px',
+    border: '2px solid #111',
+    borderRadius: '16px',
+    background: '#fff',
+  },
+  saveHeader: { fontSize: '1rem', fontWeight: 700 },
+  input: {
+    padding: '12px 14px',
+    fontSize: '1rem',
+    borderRadius: '12px',
+    border: '2px solid #111',
+    background: '#fff',
+  },
+  saveButton: {
+    padding: '14px 16px',
+    fontSize: '1rem',
+    borderRadius: '12px',
+    border: '2px solid #111',
+    background: '#111',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  savedList: {
+    width: '100%',
+    maxWidth: '560px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+  },
+  savedItem: {
+    padding: '14px 16px',
+    borderRadius: '14px',
+    background: '#fff',
+    border: '1px solid rgba(17,17,17,0.18)',
+  },
+  savedName: { fontWeight: 700 },
+  savedMeta: { fontSize: '0.92rem', opacity: 0.75, marginTop: '4px' },
+  savedTags: { fontSize: '0.92rem', marginTop: '6px' },
   hello: { fontSize: '1.4rem', margin: 0 },
 };
